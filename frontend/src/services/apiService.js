@@ -95,10 +95,10 @@ export const apiService = {
   getUserCart: () => api.get('/api/cart'),
   
   // Reviews
-  getProductReviews: (productId) => cachedGet(`/api/review/${productId}`),
+  // getProductReviews: (productId) => cachedGet(`/api/review/${productId}`),
   
   // Newsletter
-  subscribeNewsletter: (email) => api.post('/api/newsletter/subscribe', { email }),
+  // subscribeNewsletter: (email) => api.post('/api/newsletter/subscribe', { email }),
   
   // Clear cache (useful for forced refresh)
   clearCache: () => {

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with optimized defaults
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || "http://localhost:4000",
+  baseURL: import.meta.env.VITE_BACKEND_URL || "https://wellfire-backend-s1qt.onrender.com",
   timeout: 10000, // 10 second timeout
   headers: {
     'Content-Type': 'application/json',

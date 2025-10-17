@@ -336,12 +336,7 @@ const Investors = () => {
                   transition={{ duration: 0.8 }}
                 >
                   <div className="mb-8">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-wider">
-                      WELLFIRE
-                    </h2>
-                    <h3 className="text-lg md:text-xl text-red-500 mb-6 font-semibold tracking-wide">
-                      INVESTMENT PROJECTS
-                    </h3>
+                   
                   </div>
                   
                   <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-2xl">

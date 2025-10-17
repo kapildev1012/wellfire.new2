@@ -183,11 +183,12 @@ const AddInvestmentProduct = ({ token }) => {
     if (!formData.description.trim()) errors.push("Description is required");
     if (!formData.artistName.trim()) errors.push("Artist name is required");
     if (!formData.category) errors.push("Category is required");
-    if (!formData.totalBudget || formData.totalBudget <= 0)
-      errors.push("Total budget must be greater than 0");
-    if (!formData.minimumInvestment || formData.minimumInvestment <= 0)
-      errors.push("Minimum investment must be greater than 0");
+    if (formData.totalBudget === "" || formData.totalBudget === null || formData.totalBudget === undefined || isNaN(formData.totalBudget) || formData.totalBudget < 0)
+      errors.push("Total budget must be a valid number (0 or greater)");
+    if (formData.minimumInvestment === "" || formData.minimumInvestment === null || formData.minimumInvestment === undefined || isNaN(formData.minimumInvestment) || formData.minimumInvestment < 0)
+      errors.push("Minimum investment must be a valid number (0 or greater)");
     if (
+      parseFloat(formData.totalBudget) > 0 && 
       parseFloat(formData.minimumInvestment) > parseFloat(formData.totalBudget)
     ) {
       errors.push("Minimum investment cannot exceed total budget");
@@ -679,9 +680,13 @@ const AddInvestmentProduct = ({ token }) => {
                       handleInputChange("totalBudget", e.target.value)
                     }
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    placeholder="Enter total budget"
+                    placeholder="Enter total budget (₹0 for free projects)"
                     min="0"
+                    step="1"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Set to ₹0 for free projects or promotional content
+                  </p>
                 </div>
 
                 <div>
@@ -696,9 +701,13 @@ const AddInvestmentProduct = ({ token }) => {
                       handleInputChange("minimumInvestment", e.target.value)
                     }
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    placeholder="Enter minimum investment"
+                    placeholder="Enter minimum investment (₹0 for no minimum)"
                     min="0"
+                    step="1"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Set to ₹0 for free projects or when no minimum investment is required
+                  </p>
                 </div>
 
                 <div>
@@ -864,7 +873,7 @@ const AddInvestmentProduct = ({ token }) => {
                     <div>
                       <span className="text-gray-600">Total Budget:</span>
                       <div className="font-medium text-lg text-green-600">
-                        {formData.totalBudget
+                        {formData.totalBudget !== "" && formData.totalBudget !== null && formData.totalBudget !== undefined
                           ? `₹${formData.totalBudget}`
                           : "Not provided"}
                       </div>
@@ -872,7 +881,7 @@ const AddInvestmentProduct = ({ token }) => {
                     <div>
                       <span className="text-gray-600">Minimum Investment:</span>
                       <div className="font-medium text-lg text-blue-600">
-                        {formData.minimumInvestment
+                        {formData.minimumInvestment !== "" && formData.minimumInvestment !== null && formData.minimumInvestment !== undefined
                           ? `₹${formData.minimumInvestment}`
                           : "Not provided"}
                       </div>

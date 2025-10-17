@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useInvestmentProducts } from "../hooks/useApi";
 
@@ -94,23 +94,7 @@ const Services = () => {
     }
   }, [currentSlide, products, selectedProduct]);
 
-  // Auto-play functionality
-  useEffect(() => {
-    if (isPlaying && !isLoading) {
-      const interval = setInterval(() => {
-        setCurrentSlide((prev) => {
-          const newSlide = (prev + 1) % services.length;
-          const newProducts = products[services[newSlide].category] || [];
-          if (newProducts.length > 0) {
-            setSelectedProduct(newProducts[0]);
-          }
-          return newSlide;
-        });
-      }, 10000);
-      return () => clearInterval(interval);
-    }
-  }, [isPlaying, isLoading, services.length, products]);
-
+ 
   const nextSlide = () => {
     setCurrentSlide((prev) => {
       const newSlide = (prev + 1) % services.length;
@@ -162,22 +146,22 @@ const Services = () => {
   // Calculate dynamic height based on number of products
   const calculateDynamicHeight = () => {
     const productCount = currentProducts.length;
-    
+
     if (productCount === 0) {
-      return 'min-h-screen lg:h-screen'; // Default height for no products
+      return 'min-h-[70vh] sm:min-h-[80vh] lg:h-screen'; // Smaller mobile, standard desktop
     }
-    
+
     if (productCount <= 3) {
-      return 'min-h-screen lg:h-screen'; // Standard height for 1-3 products
+      return 'min-h-[70vh] sm:min-h-[80vh] lg:h-screen'; // Smaller mobile, standard desktop
     }
-    
+
     if (productCount <= 6) {
-      return 'min-h-[120vh] lg:min-h-screen'; // Slightly taller for 4-6 products
+      return 'min-h-[85vh] sm:min-h-[95vh] lg:min-h-screen'; // Medium mobile, standard desktop
     }
-    
+
     // For 7+ products, calculate height based on product count
-    const extraHeight = Math.min((productCount - 6) * 10, 40); // Add up to 40vh extra
-    return `min-h-[${120 + extraHeight}vh] lg:min-h-screen`;
+    const extraHeight = Math.min((productCount - 6) * 8, 30); // Reduced extra height for mobile
+    return `min-h-[${85 + extraHeight}vh] sm:min-h-[${95 + extraHeight}vh] lg:min-h-screen`;
   };
 
   const dynamicHeight = calculateDynamicHeight();
@@ -192,7 +176,7 @@ const Services = () => {
           initial={{ opacity: 0, scale: window.innerWidth < 768 ? 1.02 : 1.1 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 1, ease: "easeInOut" }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
         >
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -202,7 +186,7 @@ const Services = () => {
           />
           
           {/* Dark overlay */}
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-black/70" />
         </motion.div>
       </AnimatePresence>
 
@@ -233,7 +217,7 @@ const Services = () => {
             <motion.div
               initial={{ opacity: 0, y: -30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.6 }}
               className="hidden lg:block"
             >
               <h1 className="text-xs sm:text-sm md:text-lg xl:text-2xl font-bold text-white tracking-[0.15em] sm:tracking-[0.2em] mb-2 md:mb-4 hardware-accelerated">
@@ -268,13 +252,13 @@ const Services = () => {
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 50 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.6 }}
               >
                 <motion.h2
                   className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-white mb-2 sm:mb-4 md:mb-6 tracking-wide leading-tight hardware-accelerated"
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
                 >
                   {services[currentSlide].title}
                 </motion.h2>
@@ -283,7 +267,7 @@ const Services = () => {
                   className="text-white/90 text-sm sm:text-base md:text-lg xl:text-lg font-light leading-relaxed mb-4 sm:mb-6 md:mb-8 max-w-lg mobile-text-wrap"
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
+                  transition={{ duration: 0.8, delay: 0.22 }}
                 >
                   {services[currentSlide].description}
                 </motion.p>
@@ -383,90 +367,39 @@ const Services = () => {
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.4 }}
                 className="space-y-3 sm:space-y-4 md:space-y-5"
               >
-                {currentProducts.length > 0 ? (
-                  <>
-                    {/* Main selected product */}
-                    <motion.div
-                      className="relative aspect-video rounded-lg overflow-hidden cursor-pointer group shadow-lg"
-                      onClick={() => selectedProduct && handleProductClick(selectedProduct)}
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <img
-                        src={selectedProduct?.coverImage || selectedProduct?.image || services[currentSlide].defaultImage}
-                        alt={selectedProduct?.title || selectedProduct?.name}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 xl:w-16 xl:h-16 border-2 border-white rounded-full flex items-center justify-center backdrop-blur-sm bg-white/20 shadow-lg">
-                          <Play className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 xl:w-6 xl:h-6 text-white ml-1" fill="white" />
-                        </div>
-                      </div>
-                      
-                      {selectedProduct && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 sm:p-4 xl:p-5">
-                          <h3 className="text-white font-semibold text-sm sm:text-base mb-2 mobile-text-wrap">
-                            {selectedProduct.title || selectedProduct.name}
-                          </h3>
-                          <p className="text-white/80 text-sm line-clamp-2 mobile-text-wrap">
-                            {selectedProduct.description}
-                          </p>
-                        </div>
-                      )}
-                    </motion.div>
+                {/* Main Product Photo - No Names/Titles */}
+                <motion.div
+                  className="relative aspect-video rounded-lg overflow-hidden shadow-lg"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  <img
+                    src={backgroundImage}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                </motion.div>
 
-                    {/* Product thumbnails - Mobile: Show only 6 items */}
-                    <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4">
-                      {(window.innerWidth < 768 ? currentProducts.slice(0, 6) : currentProducts.slice(0, 6)).map((product, index) => (
-                        <motion.div
-                          key={product._id}
-                          className={`relative aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all duration-300 touch-target shadow-md ${
-                            selectedProduct?._id === product._id 
-                              ? 'border-white scale-105' 
-                              : 'border-transparent hover:border-white/50'
-                          }`}
-                          onClick={() => handleProductSelect(product)}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.6, delay: index * 0.1 }}
-                        >
-                          <img
-                            src={product.coverImage || product.image || services[currentSlide].defaultImage}
-                            alt={product.title || product.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </motion.div>
-                      ))}
+                {/* Coming Soon Message */}
+                <motion.div
+                  className="text-center py-4 sm:py-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  <div className="space-y-3">
+                    <div className="text-white/60 text-sm sm:text-base font-bold tracking-wider">
+                      Stay tuned 
                     </div>
-
-                    {/* Show "more projects" indicator only if there are more than 6 items */}
-                    {currentProducts.length > 6 && (
-                      <motion.div
-                        className="text-center pt-2"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 0.8 }}
-                      >
-                        <span className="text-white/60 text-xs sm:text-sm font-light tracking-wide">
-                          +{currentProducts.length - 6} MORE PROJECTS
-                        </span>
-                      </motion.div>
-                    )}
-                  </>
-                ) : (
-                  <motion.div
-                    className="text-center py-4 sm:py-8 xl:py-12"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    <p className="text-white text-lg sm:text-xl">
-                      No projects available in this category
-                    </p>
-                  </motion.div>
-                )}
+                    <div className="text-yellow/80 text-base sm:text-lg md:text-4xl font-bold tracking-wide">
+                      LAUNCHING SOON
+                    </div>
+                  </div>
+                </motion.div>
               </motion.div>
             </AnimatePresence>
           </div>

@@ -262,7 +262,7 @@ const LoadingScreen = ({ isLoading, onComplete }) => {
               {(location.pathname === "/Latestcollection1" || 
                 location.pathname === "/latestcollection1" || 
                 location.pathname === "/LatestCollection1")
-                ? "Loading Work Portfolio..." 
+                ? "Welcome to Wellfire " 
                 : "Welcome to Wellfire"
               }
             </motion.p>

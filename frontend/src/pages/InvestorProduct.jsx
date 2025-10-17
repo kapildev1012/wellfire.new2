@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const InvestorProduct = () => {
   const { id } = useParams();
@@ -385,6 +385,7 @@ const InvestorProduct = () => {
                 onChange={handleChange}
                 pattern="[a-zA-Z\s]+"
                 title="Please enter only alphabets and spaces"
+                disabled={isSubmitting}
                 className={`w-full bg-transparent border-2 ${
                   errors.name ? "border-red-500" : "border-gray-600"
                 } rounded-lg text-white placeholder-gray-400 focus:border-red-500 focus:outline-none transition-colors ${
@@ -471,6 +472,7 @@ const InvestorProduct = () => {
               placeholder="Website (Optional)"
               value={formData.website}
               onChange={handleChange}
+              disabled={isSubmitting}
               className={`w-full bg-transparent border-2 border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-red-500 focus:outline-none transition-colors ${
                 isMobile ? "px-4 py-3.5 text-sm sm:text-base" : "px-5 py-4 text-base"
               }`}
@@ -485,6 +487,7 @@ const InvestorProduct = () => {
               value={formData.companyDetail}
               onChange={handleChange}
               rows={isMobile ? "4" : "5"}
+              disabled={isSubmitting}
               className={`w-full bg-transparent border-2 ${
                 errors.companyDetail ? "border-red-500" : "border-gray-600"
               } rounded-lg text-white placeholder-gray-400 focus:border-red-500 focus:outline-none transition-colors resize-vertical ${
@@ -506,6 +509,7 @@ const InvestorProduct = () => {
               value={formData.expectations}
               onChange={handleChange}
               rows={isMobile ? "4" : "5"}
+              disabled={isSubmitting}
               className={`w-full bg-transparent border-2 ${
                 errors.expectations ? "border-red-500" : "border-gray-600"
               } rounded-lg text-white placeholder-gray-400 focus:border-red-500 focus:outline-none transition-colors resize-vertical ${
@@ -529,6 +533,7 @@ const InvestorProduct = () => {
                 type="file"
                 multiple
                 onChange={handleFileUpload}
+                disabled={isSubmitting}
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt,.xls,.xlsx"
                 className="hidden"
                 id="file-upload"

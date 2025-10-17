@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const Contact = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -538,9 +538,7 @@ const Contact = () => {
                     maxLength="50"
                     onFocus={() => isMobile && setShowMobileKeyboard(true)}
                     onBlur={() => isMobile && setShowMobileKeyboard(false)}
-                    className={`w-full bg-gray-700/50 border ${
-                      errors.name ? "border-red-500" : "border-gray-600"
-                    } text-white px-${isMobile ? '2' : '3'} py-${isMobile ? '2' : '2'} sm:py-2 rounded-lg focus:border-red-500 focus:outline-none transition-all duration-300 focus:ring-2 focus:ring-red-500/20 ${isMobile ? 'text-base' : 'text-sm sm:text-base'}`}
+                    disabled={isSubmitting}
                   />
                   {errors.name && (
                     <p className={`text-red-400 mt-1 flex items-center ${isMobile ? 'text-xs' : 'text-sm'}`}>
@@ -567,6 +565,7 @@ const Contact = () => {
                     title="Stage name should be 2-30 characters"
                     onFocus={() => isMobile && setShowMobileKeyboard(true)}
                     onBlur={() => isMobile && setShowMobileKeyboard(false)}
+                    disabled={isSubmitting}
                     className={`w-full bg-gray-700/50 border border-gray-600 text-white px-${isMobile ? '3' : '4'} py-${isMobile ? '3' : '2'} sm:py-3 rounded-lg focus:border-red-500 focus:outline-none transition-all duration-300 ${isMobile ? 'text-base' : 'text-sm sm:text-base'}`}
                   />
                   {errors.stageName && (
@@ -598,6 +597,7 @@ const Contact = () => {
                       inputMode="numeric"
                       onFocus={() => isMobile && setShowMobileKeyboard(true)}
                       onBlur={() => isMobile && setShowMobileKeyboard(false)}
+                      disabled={isSubmitting}
                       className={`w-full bg-gray-700/50 border ${
                         errors.contact ? "border-red-500" : "border-gray-600"
                       } text-white px-${isMobile ? '3' : '4'} py-${isMobile ? '3' : '2'} sm:py-3 rounded-lg focus:border-red-500 focus:outline-none transition-all duration-300 focus:ring-2 focus:ring-red-500/20 ${isMobile ? 'text-base' : 'text-sm sm:text-base'}`}
@@ -626,6 +626,7 @@ const Contact = () => {
                       title="Please enter a valid email address"
                       onFocus={() => isMobile && setShowMobileKeyboard(true)}
                       onBlur={() => isMobile && setShowMobileKeyboard(false)}
+                      disabled={isSubmitting}
                       className={`w-full bg-gray-700/50 border ${
                         errors.email ? "border-red-500" : "border-gray-600"
                       } text-white px-${isMobile ? '3' : '4'} py-${isMobile ? '3' : '2'} sm:py-3 rounded-lg focus:border-red-500 focus:outline-none transition-all duration-300 focus:ring-2 focus:ring-red-500/20 ${isMobile ? 'text-base' : 'text-sm sm:text-base'}`}
@@ -685,6 +686,7 @@ const Contact = () => {
                     name="industry"
                     value={formData.industry}
                     onChange={handleChange}
+                    disabled={isSubmitting}
                     className={`w-full bg-gray-700/50 border border-gray-600 text-white px-${isMobile ? '3' : '4'} py-${isMobile ? '3' : '2'} sm:py-3 rounded-lg focus:border-red-500 focus:outline-none transition-all duration-300 ${isMobile ? 'text-base' : 'text-sm sm:text-base'}`}
                     onTouchStart={() => {
                       if (isMobile && 'vibrate' in navigator) {
@@ -743,6 +745,7 @@ const Contact = () => {
                     minLength="20"
                     maxLength="1000"
                     title="Please provide at least 20 characters describing yourself and your goals"
+                    disabled={isSubmitting}
                     className={`w-full bg-gray-700/50 border ${
                       errors.message ? "border-red-500" : "border-gray-600"
                     } text-white px-${isMobile ? '3' : '4'} py-${isMobile ? '3' : '2'} sm:py-3 rounded-lg focus:border-red-500 focus:outline-none transition-all duration-300 resize-vertical focus:ring-2 focus:ring-red-500/20 ${isMobile ? 'text-base' : 'text-sm sm:text-base'}`}
@@ -782,6 +785,7 @@ const Contact = () => {
                       type="file"
                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4,.mp3,.zip"
                       onChange={handleFileChange}
+                      disabled={isSubmitting}
                       className="hidden"
                       id="file-upload"
                     />
@@ -898,6 +902,7 @@ const Contact = () => {
                     <input
                       type="url"
                       placeholder=" YouTube/Spotify profile"
+                      disabled={isSubmitting}
                       className={`w-full bg-gray-700/50 border border-gray-600 text-white px-${isMobile ? '3' : '4'} py-${isMobile ? '2' : '2'} rounded-lg focus:border-red-500 focus:outline-none transition-all duration-300 ${isMobile ? 'text-base' : 'text-sm'}`}
                       onFocus={() => isMobile && setShowMobileKeyboard(true)}
                       onBlur={() => isMobile && setShowMobileKeyboard(false)}
@@ -905,6 +910,7 @@ const Contact = () => {
                     <input
                       type="url"
                       placeholder="Instagram handle"
+                      disabled={isSubmitting}
                       className={`w-full bg-gray-700/50 border border-gray-600 text-white px-${isMobile ? '3' : '4'} py-${isMobile ? '2' : '2'} rounded-lg focus:border-red-500 focus:outline-none transition-all duration-300 ${isMobile ? 'text-base' : 'text-sm'}`}
                       onFocus={() => isMobile && setShowMobileKeyboard(true)}
                       onBlur={() => isMobile && setShowMobileKeyboard(false)}
@@ -912,6 +918,7 @@ const Contact = () => {
                     <input
                       type="url"
                       placeholder=" LinkedIn/Portfolio website"
+                      disabled={isSubmitting}
                       className={`w-full bg-gray-700/50 border border-gray-600 text-white px-${isMobile ? '3' : '4'} py-${isMobile ? '2' : '2'} rounded-lg focus:border-red-500 focus:outline-none transition-all duration-300 ${isMobile ? 'text-base' : 'text-sm'}`}
                       onFocus={() => isMobile && setShowMobileKeyboard(true)}
                       onBlur={() => isMobile && setShowMobileKeyboard(false)}

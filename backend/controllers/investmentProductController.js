@@ -603,10 +603,16 @@ const getFundingAnalytics = async(req, res) => {
                     totalBudget: 1,
                     currentFunding: 1,
                     fundingPercentage: {
-                        $multiply: [
-                            { $divide: ["$currentFunding", "$totalBudget"] },
-                            100
-                        ]
+                        $cond: {
+                            if: { $gt: ["$totalBudget", 0] },
+                            then: {
+                                $multiply: [
+                                    { $divide: ["$currentFunding", "$totalBudget"] },
+                                    100
+                                ]
+                            },
+                            else: 0
+                        }
                     }
                 }
             },

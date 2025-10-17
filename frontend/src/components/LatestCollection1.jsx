@@ -1219,7 +1219,7 @@ const CategoryShowcase = ({ category, title }) => {
                 <div className="w-full flex flex-col items-center justify-center py-4 bg-black bg-opacity-70">
                   <div className="text-center mb-3">
                     <p
-                      className="text-red text-xs font-medium"
+                      className="text-yellow text-xs font-medium"
                       style={{
                         fontFamily: "Montserrat, sans-serif",
                         fontWeight: "500",
@@ -1302,7 +1302,7 @@ const CategoryShowcase = ({ category, title }) => {
                       }}
                     >
                       <p
-                        className="text-red text-xs text-center px-3 py-2"
+                        className="text-yellow text-xs text-center px-3 py-2"
                         style={{
                           fontFamily: "Montserrat, sans-serif",
                           fontWeight: "500",

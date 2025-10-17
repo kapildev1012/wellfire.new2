@@ -29,18 +29,30 @@ const Investors = () => {
   const fetchProducts = async () => {
     try {
       setIsLoading(true);
+      setError(null); // Clear previous errors
       const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
       const response = await axios.get(`${backendUrl}/api/investment-product/list`);
       
       if (response.data.success && response.data.products) {
-        setProducts(response.data.products);
+        // Filter out products with invalid data that might cause issues
+        const validProducts = response.data.products.filter(product => 
+          product && 
+          product.totalBudget > 0 && 
+          product.productTitle && 
+          product.productTitle.trim() !== ''
+        );
+        setProducts(validProducts);
         setCurrentPage(1); // Reset to first page when new products are loaded
       } else {
-        setError('Failed to fetch products');
+        setProducts([]); // Set empty array instead of error for empty response
       }
     } catch (error) {
       console.error('Error fetching products:', error);
-      setError('Failed to connect to server');
+      setProducts([]); // Set empty array to show "Coming Soon" instead of error
+      // Only set error for actual connection issues
+      if (error.code === 'NETWORK_ERROR' || error.message.includes('Network Error')) {
+        setError('Unable to connect to server. Please check your connection.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -263,15 +275,33 @@ const Investors = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 text-lg mb-4">{error}</p>
-          <button 
-            onClick={fetchProducts}
-            className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition-colors duration-300"
+      <div className="min-h-screen bg-black flex items-center justify-center px-4">
+        <div className="text-center max-w-md mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            Retry
-          </button>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-wider">
+              WELLFIRE
+            </h1>
+            <h2 className="text-xl md:text-2xl text-red-500 mb-4 font-semibold tracking-wide">
+              INVESTMENT PROJECTS
+            </h2>
+            <div className="bg-gray-900 rounded-lg p-6 mb-6 border border-gray-800">
+              <p className="text-gray-300 text-lg mb-4">Coming Soon</p>
+              <p className="text-gray-400 text-sm mb-4">
+                We're preparing exciting investment opportunities for you.
+              </p>
+              <p className="text-red-400 text-sm mb-4">{error}</p>
+            </div>
+            <button 
+              onClick={fetchProducts}
+              className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 font-medium tracking-wide"
+            >
+              Try Again
+            </button>
+          </motion.div>
         </div>
       </div>
     );
@@ -298,16 +328,66 @@ const Investors = () => {
       <div className="px-4 sm:px-4 md:px-4 pb-6 sm:pb-12">
         <div className="max-w-7xl mx-auto">
           {products.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-gray-400 text-xl">No investment projects available at the moment.</p>
+            <div className="flex items-center justify-center min-h-[60vh]">
+              <div className="text-center max-w-lg mx-auto px-4">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <div className="mb-8">
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-wider">
+                      WELLFIRE
+                    </h2>
+                    <h3 className="text-lg md:text-xl text-red-500 mb-6 font-semibold tracking-wide">
+                      INVESTMENT PROJECTS
+                    </h3>
+                  </div>
+                  
+                  <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-2xl">
+                    <div className="mb-6">
+                      <h4 className="text-2xl text-white mb-3 font-bold">Coming Soon</h4>
+                      <div className="w-16 h-1 bg-red-500 mx-auto mb-4"></div>
+                    </div>
+                    
+                    <p className="text-gray-300 text-lg mb-4 leading-relaxed">
+                      Exciting investment opportunities are on the way!
+                    </p>
+                    
+                    <p className="text-gray-400 text-sm leading-relaxed">
+                      We're curating premium entertainment projects for investors. 
+                      Stay tuned for groundbreaking opportunities in music, film, and digital content.
+                    </p>
+                    
+                    <div className="mt-6 flex justify-center">
+                      <div className="flex space-x-2">
+                        {[0, 1, 2].map((i) => (
+                          <motion.div
+                            key={i}
+                            className="w-2 h-2 bg-red-500 rounded-full"
+                            animate={{
+                              y: [-5, 5, -5],
+                              opacity: [0.5, 1, 0.5]
+                            }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              delay: i * 0.2,
+                              ease: "easeInOut"
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-2 md:gap-3">
-              {currentProducts
-                .filter(product => product.totalBudget > 0)
-                .map((product, index) => (
-                  <ProductCard key={product._id} product={product} index={index} />
-                ))}
+              {currentProducts.map((product, index) => (
+                <ProductCard key={product._id} product={product} index={index} />
+              ))}
             </div>
           )}
 

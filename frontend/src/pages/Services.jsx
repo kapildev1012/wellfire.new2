@@ -220,7 +220,7 @@ const Services = () => {
               transition={{ duration: 0.6 }}
               className="hidden lg:block"
             >
-              <h1 className="text-xs sm:text-sm md:text-lg xl:text-2xl font-bold text-white tracking-[0.15em] sm:tracking-[0.2em] mb-2 md:mb-4 hardware-accelerated">
+              <h1 className="text-xs sm:text-sm md:text-lg xl:text-2xl font-bold text-yellow-400 tracking-[0.15em] sm:tracking-[0.2em] mb-2 md:mb-4 hardware-accelerated">
                 WELLFIRE STUDIO
               </h1>
               <p className="text-white/60 text-xs md:text-sm font-light tracking-[0.1em] sm:tracking-[0.15em] hardware-accelerated">
@@ -318,7 +318,7 @@ const Services = () => {
                         navigate('/contact');
                       }
                     }}
-                    className="bg-red-500 text-white px-4 py-2 text-sm font-medium tracking-wide hover:bg-red-600 transition-colors flex items-center justify-center gap-2 group touch-target rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                    className="bg-red-600 text-white px-4 py-2 text-sm font-medium tracking-wide hover:bg-red-600 transition-colors flex items-center justify-center gap-2 group touch-target rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                   >
                     VIEW MORE
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
@@ -391,14 +391,7 @@ const Services = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                 >
-                  <div className="space-y-3">
-                    <div className="text-white/60 text-sm sm:text-base font-bold tracking-wider">
-                      Stay tuned 
-                    </div>
-                    <div className="text-yellow/80 text-base sm:text-lg md:text-4xl font-bold tracking-wide">
-                      LAUNCHING SOON
-                    </div>
-                  </div>
+                 
                 </motion.div>
               </motion.div>
             </AnimatePresence>
@@ -442,7 +435,10 @@ const Services = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setShowLineProductionPopup(false)}
+              onClick={() => {
+                setShowLineProductionPopup(false);
+                window.scrollTo(0, 0);
+              }}
             >
               {/* Animated Background Pattern */}
               <div className="absolute inset-0 opacity-10">
@@ -491,7 +487,10 @@ const Services = () => {
                   </motion.div>
                   
                   <motion.button
-                    onClick={() => setShowLineProductionPopup(false)}
+                    onClick={() => {
+                      setShowLineProductionPopup(false);
+                      window.scrollTo(0, 0);
+                    }}
                     className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 group flex-shrink-0 ml-4"
                     aria-label="Close popup"
                     initial={{ scale: 0, rotate: 180 }}
@@ -716,7 +715,10 @@ const Services = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setShowMediaProductionPopup(false)}
+              onClick={() => {
+                setShowMediaProductionPopup(false);
+                window.scrollTo(0, 0);
+              }}
             />
             
             <motion.div
@@ -746,7 +748,10 @@ const Services = () => {
                   </div>
                   
                   <button
-                    onClick={() => setShowMediaProductionPopup(false)}
+                    onClick={() => {
+                      setShowMediaProductionPopup(false);
+                      window.scrollTo(0, 0);
+                    }}
                     className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 group flex-shrink-0 ml-4"
                     aria-label="Close popup"
                   >
@@ -807,91 +812,199 @@ const Services = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
+            {/* Enhanced Backdrop */}
             <motion.div
               className="absolute inset-0 bg-gradient-to-br from-black/90 via-gray-900/95 to-black/90 backdrop-blur-md"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setShowGovernmentSubsidyPopup(false)}
-            />
-            
+              onClick={() => {
+                setShowGovernmentSubsidyPopup(false);
+                window.scrollTo(0, 0);
+              }}
+            >
+              {/* Animated Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-green-500 rounded-full blur-2xl animate-pulse delay-1000"></div>
+                <div className="absolute bottom-1/4 left-1/3 w-20 h-20 bg-blue-500 rounded-full blur-2xl animate-pulse delay-500"></div>
+              </div>
+            </motion.div>
+
+            {/* Enhanced Popup Content */}
             <motion.div
               className="relative bg-gradient-to-br from-white via-gray-50 to-white rounded-xl md:rounded-2xl shadow-2xl max-w-6xl w-full max-h-[95vh] overflow-hidden border border-gray-200 mx-2 md:mx-4"
-              initial={{ scale: 0.8, opacity: 0, y: 50 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.8, opacity: 0, y: 50 }}
+              initial={{ scale: 0.8, opacity: 0, y: 50, rotateX: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0, rotateX: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 50, rotateX: 15 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
+              style={{
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(20px)'
+              }}
             >
-              <div className="relative h-24 md:h-32 bg-gradient-to-r from-green-900 via-emerald-900 to-green-900 overflow-hidden">
-                <div 
+              {/* Cinematic Header with Background Image */}
+              <div className="relative h-24 md:h-32 bg-gradient-to-r from-gray-900 via-black to-gray-900 overflow-hidden">
+                <div
                   className="absolute inset-0 bg-cover bg-center opacity-30"
                   style={{
                     backgroundImage: 'url(https://images.unsplash.com/photo-1554224155-8d04cb21cd14?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80)'
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80" />
-                
+
+                {/* Header Content */}
                 <div className="relative z-10 flex items-center justify-between h-full px-4 md:px-8">
-                  <div className="flex-1 min-w-0">
+                  <motion.div
+                    initial={{ x: -30, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.6 }}
+                    className="flex-1 min-w-0"
+                  >
                     <h2 className="text-xl md:text-3xl font-bold text-white tracking-wide truncate">
                       GOVERNMENT SUBSIDY GUIDANCE
                     </h2>
                     <p className="text-gray-300 text-xs md:text-sm mt-1 tracking-wider">
-                      FINANCIAL INCENTIVES & COMPLIANCE
+                      INTERNATIONAL FILM INCENTIVES & TAX CREDITS
                     </p>
-                  </div>
-                  
-                  <button
-                    onClick={() => setShowGovernmentSubsidyPopup(false)}
+                  </motion.div>
+
+                  <motion.button
+                    onClick={() => {
+                      setShowGovernmentSubsidyPopup(false);
+                      window.scrollTo(0, 0);
+                    }}
                     className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 group flex-shrink-0 ml-4"
                     aria-label="Close popup"
+                    initial={{ scale: 0, rotate: 180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ delay: 0.3, duration: 0.4 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <svg className="w-5 h-5 md:w-6 md:h-6 text-white group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                  </button>
+                  </motion.button>
                 </div>
               </div>
 
-              <div className="overflow-y-auto max-h-[calc(95vh-96px)] md:max-h-[calc(95vh-128px)] bg-gradient-to-b from-white to-gray-50 p-4 md:p-8">
-                <div className="space-y-6 md:space-y-8">
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl md:rounded-2xl p-4 md:p-6 border border-green-200">
-                    <h3 className="text-base md:text-xl font-bold text-gray-900 mb-3 md:mb-4">International Subsidy Access</h3>
-                    <p className="text-gray-700 text-xs md:text-base leading-relaxed mb-4">
-                      We help production companies navigate and access government film incentives across multiple countries, maximizing your production value through expert guidance and compliance management.
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-white rounded-lg p-3 md:p-4 shadow-sm text-center">
-                        <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                          <span className="text-white text-xs font-bold">IN</span>
-                        </div>
-                        <h4 className="font-semibold text-gray-900 mb-1">India</h4>
-                        <p className="text-green-600 font-bold">Up to 40%</p>
-                      </div>
-                      <div className="bg-white rounded-lg p-3 md:p-4 shadow-sm text-center">
-                        <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                          <span className="text-white text-xs font-bold">AE</span>
-                        </div>
-                        <h4 className="font-semibold text-gray-900 mb-1">UAE</h4>
-                        <p className="text-green-600 font-bold">30%</p>
-                      </div>
-                      <div className="bg-white rounded-lg p-3 md:p-4 shadow-sm text-center">
-                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                          <span className="text-white text-xs font-bold">UK</span>
-                        </div>
-                        <h4 className="font-semibold text-gray-900 mb-1">United Kingdom</h4>
-                        <p className="text-green-600 font-bold">AVEC & IFTC</p>
+              {/* Enhanced Scrollable Content */}
+              <div className="overflow-y-auto max-h-[calc(95vh-96px)] md:max-h-[calc(95vh-128px)] bg-gradient-to-b from-white to-gray-50">
+                {/* Hero Section */}
+                <motion.div
+                  className="p-4 md:p-8 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-gray-200"
+                  initial={{ y: 30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                >
+                  <div className="flex items-start gap-4 md:gap-6">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg">
+                        <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                       </div>
                     </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base md:text-xl font-bold text-gray-900 mb-2 md:mb-3">Global Subsidy Expertise</h3>
+                      <p className="text-gray-700 text-xs md:text-base leading-relaxed">
+                        We provide comprehensive guidance on government film incentives across
+                        <span className="font-semibold text-emerald-600"> India, UAE, UK, USA, Canada, Australia</span> and more.
+                      </p>
+                    </div>
                   </div>
+                </motion.div>
 
-                  <div className="bg-gradient-to-r from-gray-900 to-black rounded-xl md:rounded-2xl p-6 md:p-8 text-center">
-                    <h3 className="text-base md:text-xl font-bold text-white mb-3 md:mb-4">Complete Compliance Management</h3>
-                    <p className="text-gray-300 text-xs md:text-base leading-relaxed max-w-3xl mx-auto">
-                      Our expertise ensures your production meets all local expenditure criteria and compliance requirements to successfully claim and maximize available government subsidies and tax incentives.
+                {/* Subsidy Details */}
+                <motion.div
+                  className="p-4 md:p-8"
+                  initial={{ y: 30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                >
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl md:rounded-2xl p-4 md:p-6 mb-6 md:mb-8 border border-green-200">
+                    <h3 className="text-base md:text-xl font-bold text-gray-900 mb-3 md:mb-4">Maximize Your Production Value</h3>
+                    <p className="text-gray-700 text-xs md:text-base leading-relaxed mb-4">
+                      Access government subsidies and tax incentives to significantly reduce your production costs and increase your budget efficiency.
+                    </p>
+                    <p className="text-gray-700 text-xs md:text-base leading-relaxed">
+                      Our expert team ensures you meet all compliance requirements while maximizing your eligible incentives across multiple territories.
                     </p>
                   </div>
-                </div>
+
+                  {/* Country Incentive Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+                    {[
+                      {
+                        country: "India",
+                        incentive: "Up to 40%",
+                        description: "Central and state government incentives including national rebate up to 40% on qualifying expenditure.",
+                        color: "from-orange-500 to-red-500"
+                      },
+                      {
+                        country: "UAE (Abu Dhabi)",
+                        incentive: "30%",
+                        description: "30% cash rebate on qualifying production spend in Abu Dhabi.",
+                        color: "from-green-500 to-teal-500"
+                      },
+                      {
+                        country: "United Kingdom",
+                        incentive: "AVEC & IFTC",
+                        description: "Audio-Visual Expenditure Credit (AVEC) and Independent Film Tax Credit (IFTC) programs.",
+                        color: "from-blue-500 to-indigo-500"
+                      },
+                      {
+                        country: "United States",
+                        incentive: "State Credits",
+                        description: "State-level tax credits and rebates varying by location and project scope.",
+                        color: "from-red-500 to-pink-500"
+                      },
+                      {
+                        country: "Canada",
+                        incentive: "Federal & Provincial",
+                        description: "Federal and provincial refundable tax credits on labor and local qualifying spend.",
+                        color: "from-red-600 to-red-700"
+                      },
+                      {
+                        country: "Australia",
+                        incentive: "Up to 40%",
+                        description: "Location Offset (up to 30%) and Producer Offset (up to 40%) plus state film funds.",
+                        color: "from-yellow-500 to-orange-500"
+                      }
+                    ].map((item, index) => (
+                      <motion.div
+                        key={item.country}
+                        className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300"
+                        initial={{ y: 30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.5 + index * 0.1, duration: 0.6 }}
+                        whileHover={{ scale: 1.02, y: -5 }}
+                      >
+                        <div className="flex items-center justify-between mb-3 md:mb-4">
+                          <h4 className="text-base md:text-lg font-bold text-gray-900">{item.country}</h4>
+                          <span className={`inline-block px-3 md:px-4 py-1.5 md:py-2 bg-gradient-to-r ${item.color} text-white text-xs md:text-sm font-bold rounded-full shadow-lg`}>
+                            {item.incentive}
+                          </span>
+                        </div>
+                        <p className="text-gray-700 leading-relaxed text-xs md:text-sm">{item.description}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Services Offered */}
+                  <motion.div
+                    className="bg-gradient-to-r from-gray-900 to-black rounded-xl md:rounded-2xl p-6 md:p-8 text-center"
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.8, duration: 0.6 }}
+                  >
+                    <h3 className="text-base md:text-xl font-bold text-white mb-3 md:mb-4">Complete Compliance Management</h3>
+                    <p className="text-gray-300 text-xs md:text-base leading-relaxed max-w-3xl mx-auto">
+                      Our expertise ensures your production meets all local expenditure criteria and compliance requirements to successfully claim and maximize available government subsidies and tax incentives across all territories.
+                    </p>
+                  </motion.div>
+                </motion.div>
               </div>
             </motion.div>
           </motion.div>

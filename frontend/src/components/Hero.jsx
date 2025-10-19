@@ -91,7 +91,7 @@ const Hero = () => {
       >
         {/* Loading placeholder */}
         {!isVideoLoaded && (
-          <div className="absolute inset-0 bg-gray-900 flex items-center justify-center z-20">
+          <div className="absolute inset-0 bg-black flex items-center justify-center z-20">
             <div className="animate-pulse text-white text-lg">
               Loading...
             </div>

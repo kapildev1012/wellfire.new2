@@ -316,7 +316,7 @@ const Investors = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-2xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 text-red-500 hover:text-red-400 transition-colors duration-300 cursor-default tracking-wider drop-shadow-lg uppercase"
+            className="text-2xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 text-yellow-500 hover:text-yellow-400 transition-colors duration-300 cursor-default tracking-wider drop-shadow-lg uppercase"
           >
             Investment Projects
           </motion.h1>
@@ -341,18 +341,12 @@ const Investors = () => {
                   
                   <div className="bg-gray-900 rounded-xl p-8 border border-gray-800 shadow-2xl">
                     <div className="mb-6">
-                      <h4 className="text-2xl text-white mb-3 font-bold">Coming Soon</h4>
-                      <div className="w-16 h-1 bg-red-500 mx-auto mb-4"></div>
+                      <h4 className="text-2xl text-white mb-3 font-bold">Stay tuned !!
+                       Launching soon ……</h4>
+                      
                     </div>
                     
-                    <p className="text-gray-300 text-lg mb-4 leading-relaxed">
-                      Exciting investment opportunities are on the way!
-                    </p>
-                    
-                    <p className="text-gray-400 text-sm leading-relaxed">
-                      We're curating premium entertainment projects for investors. 
-                      Stay tuned for groundbreaking opportunities in music, film, and digital content.
-                    </p>
+                  
                     
                     <div className="mt-6 flex justify-center">
                       <div className="flex space-x-2">

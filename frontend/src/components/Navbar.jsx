@@ -12,6 +12,7 @@ import {
   FaUserCircle,
 } from "react-icons/fa";
 import { Link, NavLink } from "react-router-dom";
+
 import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
 
@@ -36,19 +37,16 @@ const Navbar = () => {
         setDropdownOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const navLinks = [
     { to: "/", label: "Home", icon: FaHome },
-    { to: "/AboutPreview", label: "About", icon: FaInfoCircle },
+   
     { to: "/Services", label: "Services", icon: FaCog },
-    { to: "/LatestCollection1", label: "Work", icon: FaBriefcase },
+    { to: "/LatestCollection1", label: "Projects", icon: FaBriefcase },
     { to: "/Investors", label: "Investors", icon: FaDollarSign },
     { to: "/contact", label: "Contact Us", icon: FaPhone },
   ];
-
   return (
     <>
       {/* Navbar */}
@@ -60,7 +58,7 @@ const Navbar = () => {
         {/* Logo - Now visible on all screen sizes */}
         <Link to="/" className="flex items-center">
           {/* Show image logo on medium screens and up */}
-          <img src={assets.logo} alt="logo" className="hidden md:block w-20 h-auto" />
+          <img src={assets.logo} alt="logo" className="hidden md:block w-20 h-20 object-contain" />
           
           {/* Show text logo on mobile */}
           <div className="md:hidden">

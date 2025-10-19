@@ -298,7 +298,7 @@ const About = () => {
                   {" US".split("").map((char, index) => (
                     <motion.span
                       key={index + 6}
-                      initial={{ opacity: 0, y: 20 }}
+                      inion toitial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: (index + 6) * 0.1 }}
                       className="inline-block"

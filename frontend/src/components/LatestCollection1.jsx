@@ -765,7 +765,7 @@ const CategoryShowcase = ({ category, title }) => {
         {product.youtubeLink && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-1.5 sm:p-2 z-30">
             <h4 
-              className="text-red-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider leading-tight"
+              className="text-yellow-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider leading-tight"
               style={{
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: "800",
@@ -796,7 +796,7 @@ const CategoryShowcase = ({ category, title }) => {
           <h2
             className={`text-lg sm:text-2xl md:text-3xl lg:text-4xl uppercase tracking-widest mb-1 sm:mb-4 ${
               title === "MUSIC VIDEOS PRODUCTION" || title === "FILM ASSOCIATIONS" || title === "ADVERTISING" 
-                ? "text-red-500 font-bold" 
+                ? "text-yellow-400 font-bold" 
                 : "text-white"
             }`}
             style={{
@@ -831,7 +831,7 @@ const CategoryShowcase = ({ category, title }) => {
           <h2
             className={`text-lg sm:text-2xl md:text-3xl lg:text-4xl uppercase tracking-widest mb-1 sm:mb-4 ${
               title === "MUSIC VIDEOS PRODUCTION" || title === "FILM ASSOCIATIONS" || title === "ADVERTISING" 
-                ? "text-red-500 font-bold" 
+                ? "text-yellow-400 font-bold" 
                 : "text-white"
             }`}
             style={{
@@ -940,7 +940,7 @@ const CategoryShowcase = ({ category, title }) => {
         <h2
           className={`text-lg sm:text-2xl md:text-3xl lg:text-4xl uppercase tracking-widest mb-1 sm:mb-4 ${
             title === "MUSIC VIDEOS PRODUCTION" || title === "FILM ASSOCIATIONS" || title === "ADVERTISING" 
-              ? "text-red-500 font-bold" 
+              ? "text-yellow-400 font-bold" 
               : "text-white"
           }`}
           style={{
@@ -1164,7 +1164,7 @@ const CategoryShowcase = ({ category, title }) => {
                   <div className="w-full px-2 pb-1 flex justify-center">
                     <div className="text-center">
                       <h3
-                        className="text-red-500 text-sm font-bold uppercase tracking-wider leading-tight mb-0.5"
+                        className="text-yellow-400 text-sm font-bold uppercase tracking-wider leading-tight mb-0.5"
                         style={{
                           fontFamily: "Montserrat, sans-serif",
                           fontWeight: "800",

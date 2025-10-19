@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
+import { Instagram, Youtube, Facebook } from "lucide-react";
 import logo from "../assets/logo.png";
 import Navbar from "./Navbar";
 
@@ -54,8 +55,13 @@ const TransparentNavbar = () => {
     { to: "/services", label: "Services" },
     { to: "/LatestCollection1", label: "Projects" },
     { to: "/investors", label: "Investors" },
-    { to: "/AboutPreview", label: "About" },
     { to: "/contact", label: "Contact Us" },
+    {
+      type: "social",
+      instagram: "https://www.instagram.com/thewellfiremedianetwork?igsh=MW5uYTFqamN0bG1tcw==&utm_source=qr",
+      youtube: "https://www.youtube.com/@TheWellfirestudios",
+      facebook: "#"
+    },
   ];
 
   // Use regular Navbar for mobile devices
@@ -82,7 +88,7 @@ const TransparentNavbar = () => {
               <img
                 src={logo}
                 alt="Wellfire Logo"
-                className="h-full w-auto object-contain"
+                className="h-20 w-20 object-contain"
               />
             </Link>
           )}
@@ -92,23 +98,71 @@ const TransparentNavbar = () => {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center gap-8">
-            {navLinks.map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                className={`text-sm font-medium text-white hover:text-gray-300 transition-all duration-500 relative group ${
-                  !isScrolled ? 'drop-shadow-lg' : ''
-                }`}
-                style={{
-                  textShadow: !isScrolled ? (isHomePage ? '2px 2px 4px rgba(0,0,0,0.9)' : '1px 1px 2px rgba(0,0,0,0.6)') : 'none'
-                }}
-                onClick={() => window.scrollTo(0, 0)}
-              >
-                {label}
-                {/* Hover underline effect */}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full" />
-              </Link>
-            ))}
+            {navLinks.map((item, index) => {
+              if (item.type === "social") {
+                return (
+                  <div key={index} className="flex items-center gap-4">
+                    <a
+                      href={item.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`text-white hover:text-gray-300 transition-all duration-300 hover:scale-110 ${
+                        !isScrolled ? 'drop-shadow-lg' : ''
+                      }`}
+                      style={{
+                        filter: !isScrolled ? 'drop-shadow(1px 1px 2px rgba(0,0,0,0.6))' : 'none'
+                      }}
+                    >
+                      <Instagram className="w-5 h-5" />
+                    </a>
+                    <a
+                      href={item.youtube}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`text-white hover:text-gray-300 transition-all duration-300 hover:scale-110 ${
+                        !isScrolled ? 'drop-shadow-lg' : ''
+                      }`}
+                      style={{
+                        filter: !isScrolled ? 'drop-shadow(1px 1px 2px rgba(0,0,0,0.6))' : 'none'
+                      }}
+                    >
+                      <Youtube className="w-5 h-5" />
+                    </a>
+                    <a
+                      href={item.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`text-white hover:text-gray-300 transition-all duration-300 hover:scale-110 ${
+                        !isScrolled ? 'drop-shadow-lg' : ''
+                      }`}
+                      style={{
+                        filter: !isScrolled ? 'drop-shadow(1px 1px 2px rgba(0,0,0,0.6))' : 'none'
+                      }}
+                    >
+                      <Facebook className="w-5 h-5" />
+                    </a>
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`text-sm font-medium text-white hover:text-gray-300 transition-all duration-500 relative group ${
+                    !isScrolled ? 'drop-shadow-lg' : ''
+                  }`}
+                  style={{
+                    textShadow: !isScrolled ? (isHomePage ? '2px 2px 4px rgba(0,0,0,0.9)' : '1px 1px 2px rgba(0,0,0,0.6)') : 'none'
+                  }}
+                  onClick={() => window.scrollTo(0, 0)}
+                >
+                  {item.label}
+                  {/* Hover underline effect */}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full" />
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Mobile Menu Button */}

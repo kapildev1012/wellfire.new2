@@ -374,7 +374,7 @@ const Contact = () => {
 
   return (
     <div 
-      className="min-h-screen bg-gradient-to-br bg-black text-white pt-8 md:pt-12 lg:pt-16"
+      className="min-h-screen bg-gradient-to-br bg-black text-white pt-16 md:pt-16 lg:pt-20"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -410,7 +410,7 @@ const Contact = () => {
       {/* Mobile-Optimized Header */}
       <div className="bg-black/50 backdrop-blur-sm py-2 sm:py-4 px-2 sm:px-4 lg:px-6">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className={`font-black mb-3 bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent ${isMobile ? 'text-xl leading-tight' : 'text-3xl lg:text-5xl'}`}>
+          <h1 className={`font-black mb-3 bg-gradient-to-r from-yellow-500 to-yellow-400 bg-clip-text text-transparent ${isMobile ? 'text-xl leading-tight' : 'text-3xl lg:text-5xl'}`}>
             {isMobile ? (
               'JOIN OUR NETWORK'
             ) : (

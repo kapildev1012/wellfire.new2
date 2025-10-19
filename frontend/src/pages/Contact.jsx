@@ -539,6 +539,9 @@ const Contact = () => {
                     onFocus={() => isMobile && setShowMobileKeyboard(true)}
                     onBlur={() => isMobile && setShowMobileKeyboard(false)}
                     disabled={isSubmitting}
+                    className={`w-full bg-gray-700/50 border ${
+                      errors.name ? "border-red-500" : "border-gray-600"
+                    } text-white px-${isMobile ? '3' : '4'} py-${isMobile ? '3' : '2'} sm:py-3 rounded-lg focus:border-red-500 focus:outline-none transition-all duration-300 focus:ring-2 focus:ring-red-500/20 ${isMobile ? 'text-base' : 'text-sm sm:text-base'}`}
                   />
                   {errors.name && (
                     <p className={`text-red-400 mt-1 flex items-center ${isMobile ? 'text-xs' : 'text-sm'}`}>

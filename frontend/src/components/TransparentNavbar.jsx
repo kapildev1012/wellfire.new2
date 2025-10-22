@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
-import { Instagram, Youtube, Facebook } from "lucide-react";
+import { Instagram, Youtube, Linkedin } from "lucide-react";
 import logo from "../assets/logo.png";
 import Navbar from "./Navbar";
 
@@ -60,7 +60,7 @@ const TransparentNavbar = () => {
       type: "social",
       instagram: "https://www.instagram.com/thewellfiremedianetwork?igsh=MW5uYTFqamN0bG1tcw==&utm_source=qr",
       youtube: "https://www.youtube.com/@TheWellfirestudios",
-      facebook: "#"
+      linkedin: "https://www.linkedin.com/company/wellfire-studios/"
     },
   ];
 
@@ -129,7 +129,7 @@ const TransparentNavbar = () => {
                       <Youtube className="w-5 h-5" />
                     </a>
                     <a
-                      href={item.facebook}
+                      href={item.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`text-white hover:text-gray-300 transition-all duration-300 hover:scale-110 ${
@@ -139,7 +139,7 @@ const TransparentNavbar = () => {
                         filter: !isScrolled ? 'drop-shadow(1px 1px 2px rgba(0,0,0,0.6))' : 'none'
                       }}
                     >
-                      <Facebook className="w-5 h-5" />
+                      <Linkedin className="w-5 h-5" />
                     </a>
                   </div>
                 );

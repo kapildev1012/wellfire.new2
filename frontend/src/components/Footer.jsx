@@ -1,7 +1,7 @@
 import {
-    Facebook,
     Instagram,
-    Youtube
+    Youtube,
+    Linkedin
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -92,10 +92,12 @@ const Footer = () => {
                   <Youtube className="w-4 h-4" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.linkedin.com/company/wellfire-studios/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-6 h-6 flex items-center justify-center text-white/70 hover:text-white transition-all duration-300 hover:scale-110"
                 >
-                  <Facebook className="w-4 h-4" />
+                  <Linkedin className="w-4 h-4" />
                 </a>
               </div>
             </div>

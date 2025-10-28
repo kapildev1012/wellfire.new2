@@ -1,8 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-
-// Use external video URL or environment variable
-const heroVideo = import.meta.env.VITE_HERO_VIDEO_URL || "https://your-video-hosting-url.com/hero.mp4";
+import heroVideo from "../assets/hero.mp4";
 
 const Hero = () => {
   const videoRef = useRef(null);

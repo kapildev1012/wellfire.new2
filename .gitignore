@@ -4,7 +4,7 @@
 .env.production
 
 # Large video files
-*.mp4
+# *.mp4 - Commented out to allow hero.mp4
 *.mov
 *.avi
 *.mkv

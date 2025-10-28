@@ -1,8 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-
-// Using external video URL to bypass Git LFS issue
-const heroVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+import heroVideo from "../assets/hero.mp4";
 
 const Hero = () => {
   const videoRef = useRef(null);

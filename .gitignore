@@ -1,3 +1,8 @@
+# Environment variables
+.env
+.env.local
+.env.production
+
 # Large video files
 *.mp4
 *.mov
@@ -12,7 +17,6 @@ frontend/src/assets/hero.mp4
 */dist/
 frontend/dist/
 admin/dist/
-
 
 # Node modules
 node_modules/

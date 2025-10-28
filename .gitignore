@@ -13,10 +13,6 @@ frontend/src/assets/hero.mp4
 frontend/dist/
 admin/dist/
 
-# Environment files
-.env
-.env.local
-.env.production
 
 # Node modules
 node_modules/

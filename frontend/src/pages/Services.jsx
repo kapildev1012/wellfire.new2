@@ -167,7 +167,7 @@ const Services = () => {
   const dynamicHeight = calculateDynamicHeight();
 
   return (
-    <section className={`relative md:left-25 w-full ${dynamicHeight} bg-black overflow-hidden services-page mobile-full-width`}>
+    <section className={`relative md:left-25 w-full ${dynamicHeight} bg-black overflow-hidden services-page mobile-full-width touch-action-manipulation`}>
       {/* Fullscreen Background */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -190,10 +190,10 @@ const Services = () => {
         </motion.div>
       </AnimatePresence>
 
-      {/* Navigation Arrows - Enhanced Design */}
+      {/* Navigation Arrows - Mobile Optimized */}
       <button
         onClick={prevSlide}
-        className="absolute left-2 sm:left-4 md:left-6 xl:left-10 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 xl:w-16 xl:h-16 rounded-full border-2 border-white/20 bg-black/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black hover:border-white transition-all duration-300 group shadow-lg hover:shadow-2xl hover:scale-110 touch-target"
+        className="absolute left-4 sm:left-4 md:left-6 xl:left-10 top-1/2 -translate-y-1/2 z-30 w-14 h-14 sm:w-12 sm:h-12 md:w-14 md:h-14 xl:w-16 xl:h-16 rounded-full border-2 border-white/30 bg-black/40 backdrop-blur-md flex items-center justify-center text-white active:bg-white active:text-black hover:bg-white hover:text-black hover:border-white transition-all duration-200 group shadow-xl touch-target"
         aria-label="Previous service"
       >
         <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 xl:w-7 xl:h-7 group-hover:scale-110 transition-transform duration-200 -ml-0.5" />
@@ -201,14 +201,14 @@ const Services = () => {
 
       <button
         onClick={nextSlide}
-        className="absolute right-2 sm:right-4 md:right-6 xl:right-10 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 xl:w-16 xl:h-16 rounded-full border-2 border-white/20 bg-black/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black hover:border-white transition-all duration-300 group shadow-lg hover:shadow-2xl hover:scale-110 touch-target"
+        className="absolute right-4 sm:right-4 md:right-6 xl:right-10 top-1/2 -translate-y-1/2 z-30 w-14 h-14 sm:w-12 sm:h-12 md:w-14 md:h-14 xl:w-16 xl:h-16 rounded-full border-2 border-white/30 bg-black/40 backdrop-blur-md flex items-center justify-center text-white active:bg-white active:text-black hover:bg-white hover:text-black hover:border-white transition-all duration-200 group shadow-xl touch-target"
         aria-label="Next service"
       >
         <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 xl:w-7 xl:h-7 group-hover:scale-110 transition-transform duration-200 ml-0.5" />
       </button>
 
-      {/* Main Content */}
-      <div className={`relative z-10 ${currentProducts.length > 6 ? 'min-h-[30vh]' : 'min-h-[30vh]'} lg:h-full flex flex-col lg:flex-row px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 2xl:px-32 services-content mobile-padding`}>
+      {/* Main Content - Mobile Optimized */}
+      <div className={`relative z-10 ${currentProducts.length > 6 ? 'min-h-[30vh]' : 'min-h-[30vh]'} lg:h-full flex flex-col lg:flex-row px-6 sm:px-6 md:px-8 lg:px-16 xl:px-32 2xl:px-32 services-content mobile-padding`}>
         
         {/* Content Section */}
         <div className="w-full lg:w-3/5 h-auto lg:h-full flex flex-col justify-between py-2 sm:py-4 md:py-6 lg:py-12 services-content-section">
@@ -255,7 +255,7 @@ const Services = () => {
                 transition={{ duration: 0.6 }}
               >
                 <motion.h2
-                  className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-white mb-2 sm:mb-4 md:mb-6 tracking-wide leading-tight hardware-accelerated"
+                  className="text-2xl sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-wide leading-tight hardware-accelerated"
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.1 }}
@@ -264,7 +264,7 @@ const Services = () => {
                 </motion.h2>
                 
                 <motion.p
-                  className="text-white/90 text-sm sm:text-base md:text-lg xl:text-lg font-light leading-relaxed mb-4 sm:mb-6 md:mb-8 max-w-lg mobile-text-wrap"
+                  className="text-white/90 text-base sm:text-base md:text-lg xl:text-lg font-light leading-relaxed mb-6 sm:mb-6 md:mb-8 max-w-lg mobile-text-wrap"
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.8, delay: 0.22 }}
@@ -272,9 +272,9 @@ const Services = () => {
                   {services[currentSlide].description}
                 </motion.p>
 
-                {/* Mobile VIEW MORE Button */}
+                {/* Mobile VIEW MORE Button - Enhanced */}
                 <motion.div
-                  className="flex lg:hidden justify-center pt-4"
+                  className="flex lg:hidden justify-center pt-6"
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.8, delay: 0.5 }}
@@ -292,7 +292,7 @@ const Services = () => {
                         navigate('/contact');
                       }
                     }}
-                    className="bg-red-500 text-white px-4 py-2 text-sm font-medium tracking-wide hover:bg-red-600 transition-colors flex items-center justify-center gap-2 group touch-target rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                    className="bg-red-500 text-white px-8 py-3 text-base font-bold tracking-wide active:bg-red-700 hover:bg-red-600 transition-colors flex items-center justify-center gap-3 group touch-target rounded-full shadow-xl active:shadow-2xl transform active:scale-95 transition-all duration-200"
                   >
                     VIEW MORE
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />

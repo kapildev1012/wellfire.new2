@@ -10,7 +10,7 @@ const ShopContextProvider = ({ children }) => {
   const delivery_fee = 0;
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
-  const url ="https://wellfire-backend-s1qt.onrender.com"
+  const url = backendUrl || "http://localhost:4000"
   // 🔄 States
   const [token, setToken] = useState("");
   const [search, setSearch] = useState("");

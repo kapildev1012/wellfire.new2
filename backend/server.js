@@ -3,8 +3,9 @@ import "dotenv/config";
 import express from "express";
 import multer from "multer"; // Added missing import
 import connectCloudinary from "./config/cloudinary.js";
-
 import connectDB from "./config/mongodb.js";
+import { cacheMiddleware, clearCache, getCacheStats } from "./middleware/cache.js";
+import { responseTime, compressionConfig, optimizeRequest } from "./middleware/performance.js";
 
 // Routes
 import cartRouter from "./routes/cartRoute.js";
@@ -22,16 +23,21 @@ const port = process.env.PORT || 4000;
 connectDB();
 connectCloudinary();
 
-// Middlewares
+// Performance Middlewares - Order matters!
+app.use(compressionConfig); // Compress responses
+app.use(responseTime); // Track response times
+app.use(optimizeRequest); // Add performance headers
+
+// Core Middlewares
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cors({
     origin: [
-        "http://localhost:5173", 
-        "http://localhost:5174", 
-        "http://localhost:5175", 
-        "http://localhost:5176", 
-        "http://localhost:5180", 
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:5176",
+        "http://localhost:5180",
         "http://localhost:3000",
         process.env.FRONTEND_URL || "https://wellfire-frontend.onrender.com"
     ],
@@ -48,7 +54,7 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 // Test route - Add this to verify server is working
-app.get("/", (req, res) => {
+app.get("/", cacheMiddleware(60), (req, res) => {
     res.json({
         success: true,
         message: "✅ API Working - Investment Platform Ready",
@@ -59,8 +65,27 @@ app.get("/", (req, res) => {
             "/api/order",
             "/api/investment-product",
             "/api/investor",
-            "/api/email"
+            "/api/email",
+            "/api/cache"
         ]
+    });
+});
+
+// Cache management endpoints
+app.get("/api/cache/stats", (req, res) => {
+    res.json({
+        success: true,
+        stats: getCacheStats()
+    });
+});
+
+app.delete("/api/cache/clear", (req, res) => {
+    const pattern = req.query.pattern;
+    const cleared = clearCache(pattern);
+    res.json({
+        success: true,
+        message: `Cleared ${cleared.length} cache entries`,
+        cleared
     });
 });
 

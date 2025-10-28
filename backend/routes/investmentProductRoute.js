@@ -15,6 +15,7 @@ import {
 import adminAuth from "../middleware/adminAuth.js";
 import upload from "../middleware/multer.js";
 import InvestmentProduct from "../models/investmentProductModel.js";
+import { cacheMiddleware } from "../middleware/cache.js";
 
 const investmentProductRouter = express.Router();
 
@@ -66,9 +67,9 @@ const debugMiddleware = (req, res, next) => {
     next();
 };
 
-// Public routes
-investmentProductRouter.get("/list", listInvestmentProducts);
-investmentProductRouter.get("/:id", getInvestmentProduct);
+// Public routes with caching (5 minutes for list, 2 minutes for individual)
+investmentProductRouter.get("/list", cacheMiddleware(300), listInvestmentProducts);
+investmentProductRouter.get("/:id", cacheMiddleware(120), getInvestmentProduct);
 
 // Admin routes with extensive debugging
 investmentProductRouter.post(

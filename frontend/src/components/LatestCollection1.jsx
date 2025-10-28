@@ -279,7 +279,7 @@ const CategoryShowcase = ({ category, title }) => {
       }
     });
 
-    // Fallback timeout - don't wait more than 5 seconds for videos
+    // Fallback timeout - don't wait more than 1 second for videos (YouTube optimization)
     setTimeout(() => {
       if (!videosReady) {
         console.log(`⏰ ${category}: Video loading timeout, forcing completion`);
@@ -295,7 +295,7 @@ const CategoryShowcase = ({ category, title }) => {
         console.log(`✅ ${category}: Timeout reached, marking as READY`);
         console.log(`📊 Global status:`, window.wellfireLoadingStatus);
       }
-    }, 5000);
+    }, 1000);
   };
 
   const handleImageClick = (product) => {
@@ -351,7 +351,8 @@ const CategoryShowcase = ({ category, title }) => {
     }
     if (!videoId) return null;
     const id = videoId.split("&")[0];
-    return `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&playsinline=1&loop=1&playlist=${id}&start=30&vq=hd1080&hd=1&quality=hd1080`;
+    // Use medium quality for faster loading (YouTube optimization)
+    return `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&playsinline=1&loop=1&playlist=${id}&start=30&vq=medium`;
   };
 
   const getYouTubeWatchUrl = (raw) => {
@@ -482,8 +483,22 @@ const CategoryShowcase = ({ category, title }) => {
     const [isMuted, setIsMuted] = useState(true);
     const [showControls, setShowControls] = useState(false);
     const [hasInteracted, setHasInteracted] = useState(false);
+    const [loadIframe, setLoadIframe] = useState(false); // Lazy load iframe
+    const [videoLoading, setVideoLoading] = useState(true); // Show loading until video plays
     const videoRef = useRef(null);
     const iframeRef = useRef(null);
+    
+    // Lazy load iframe after component mounts (YouTube optimization)
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setLoadIframe(true);
+        // Hide loading after iframe loads (simulate video ready)
+        setTimeout(() => {
+          setVideoLoading(false);
+        }, 1500); // Give iframe time to start playing
+      }, 100); // Delay iframe load by 100ms for faster initial render
+      return () => clearTimeout(timer);
+    }, []);
     
     const togglePlayPause = (e) => {
       e.stopPropagation();
@@ -554,28 +569,50 @@ const CategoryShowcase = ({ category, title }) => {
         onClick={() => handleImageClick(product)}
       >
         <div className="relative w-full h-full group overflow-hidden" style={{ margin: 0, padding: 0, border: 'none', borderRadius: 0 }}>
-          {/* Always show video if available */}
+          {/* Show thumbnail first, then lazy load iframe - YouTube optimization */}
           {getYouTubeEmbedUrl(product.youtubeLink) ? (
-            <iframe
-              ref={iframeRef}
-              src={`${getYouTubeEmbedUrl(product.youtubeLink)}&autoplay=1&mute=${isMuted ? 1 : 0}&controls=0&modestbranding=1&rel=0&start=30&vq=hd1080&hd=1&quality=hd1080`}
-              title={product.productTitle || "Video"}
-              className="w-full h-full absolute inset-0"
-              style={{
-                width: isMobile ? '120%' : '150%',
-                height: isMobile ? '120%' : '150%',
-                top: isMobile ? '-10%' : '-25%',
-                left: isMobile ? '-10%' : '-25%',
-                border: 'none',
-                margin: 0,
-                padding: 0,
-                transform: isMobile ? 'scale(1.2)' : 'scale(1.3)',
-                transformOrigin: 'center center'
-              }}
-              frameBorder="0"
-              allow="autoplay; encrypted-media; picture-in-picture"
-              allowFullScreen
-            />
+            <>
+              {/* Show thumbnail immediately for fast loading */}
+              {!loadIframe && (
+                <img
+                  src={`https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/maxresdefault.jpg`}
+                  alt={product.productTitle || "Video"}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    if (e.target.src.includes('maxresdefault')) {
+                      e.target.src = `https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/hq720.jpg`;
+                    } else if (e.target.src.includes('hq720')) {
+                      e.target.src = `https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/hqdefault.jpg`;
+                    }
+                  }}
+                />
+              )}
+              
+              {/* Lazy load iframe after delay */}
+              {loadIframe && (
+                <iframe
+                  ref={iframeRef}
+                  src={`${getYouTubeEmbedUrl(product.youtubeLink)}&autoplay=1&mute=${isMuted ? 1 : 0}&controls=0&modestbranding=1&rel=0&start=30&vq=hd720`}
+                  title={product.productTitle || "Video"}
+                  className="w-full h-full absolute inset-0"
+                  style={{
+                    width: isMobile ? '120%' : '150%',
+                    height: isMobile ? '120%' : '150%',
+                    top: isMobile ? '-10%' : '-25%',
+                    left: isMobile ? '-10%' : '-25%',
+                    border: 'none',
+                    margin: 0,
+                    padding: 0,
+                    transform: isMobile ? 'scale(1.2)' : 'scale(1.3)',
+                    transformOrigin: 'center center'
+                  }}
+                  frameBorder="0"
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              )}
+            </>
           ) : product?.videoFile ? (
             <video
               ref={videoRef}
@@ -589,6 +626,8 @@ const CategoryShowcase = ({ category, title }) => {
               onPause={handleVideoPause}
               onEnded={handleVideoEnded}
               onLoadedData={() => {
+                // Hide loading when video is ready
+                setVideoLoading(false);
                 // Only auto-play if user hasn't interacted yet, or if they previously had it playing
                 if (videoRef.current && (!hasInteracted || isPlaying)) {
                   videoRef.current.play().catch((error) => {
@@ -624,6 +663,16 @@ const CategoryShowcase = ({ category, title }) => {
                 }
               }}
             />
+          )}
+
+          {/* Loading Spinner - Show until video is playing */}
+          {videoLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 z-30">
+              <div className="flex flex-col items-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-2"></div>
+                <p className="text-white text-sm">Loading video...</p>
+              </div>
+            </div>
           )}
 
           {/* Simple Video Controls */}
@@ -670,55 +719,114 @@ const CategoryShowcase = ({ category, title }) => {
   };
 
   // Video-only card for right-side slider with YouTube thumbnails
-  const ProductVideoCard = ({ product, className = "", isYouTubeThumbnail = false }) => (
-    <motion.div
-      className={`relative overflow-hidden bg-black group ${className}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      style={isYouTubeThumbnail ? { aspectRatio: "16/9" } : { aspectRatio: "5/2" }}
-      onClick={() => handleImageClick(product)}
-    >
-      <div className="relative w-full h-full group overflow-hidden">
-       
-        {/* Show YouTube thumbnail or video */}
-        {isYouTubeThumbnail && getYouTubeWatchUrl(product.youtubeLink) ? (
-          <>
-            <img
-              src={`https://img.youtube.com/vi/${getYouTubeEmbedUrl(product.youtubeLink).split('/embed/')[1]?.split('?')[0]}/maxresdefault.jpg`}
-              alt={product?.productTitle || "YouTube Thumbnail"}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                // Try HD quality first, then fallback to standard
-                if (e.target.src.includes('maxresdefault')) {
-                  e.target.src = `https://img.youtube.com/vi/${getYouTubeEmbedUrl(product.youtubeLink).split('/embed/')[1]?.split('?')[0]}/hq720.jpg`;
-                } else if (e.target.src.includes('hq720')) {
-                  e.target.src = `https://img.youtube.com/vi/${getYouTubeEmbedUrl(product.youtubeLink).split('/embed/')[1]?.split('?')[0]}/hqdefault.jpg`;
-                }
-              }}
-            />
-          
-          </>
-        ) : getYouTubeEmbedUrl(product.youtubeLink) ? (
-          <iframe
-            src={`${getYouTubeEmbedUrl(product.youtubeLink)}&autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&start=30&vq=hd1080&hd=1&quality=hd1080`}
-            title={product.productTitle || "Video"}
-            className="w-full h-full absolute inset-0 pointer-events-none"
-            style={{
-              width: '150%',
-              height: '150%',
-              top: '-25%',
-              left: '-25%',
-              border: 'none',
-              margin: 0,
-              padding: 0,
-              transform: 'scale(1.3)',
-              transformOrigin: 'center center'
-            }}
-            frameBorder="0"
-            allow="autoplay; encrypted-media; picture-in-picture"
-            allowFullScreen
-          />
+  const ProductVideoCard = ({ product, className = "", isYouTubeThumbnail = false }) => {
+    const [loadIframe, setLoadIframe] = useState(false);
+    const [videoLoading, setVideoLoading] = useState(false);
+    
+    // Only load iframe on hover for better performance
+    const handleMouseEnter = () => {
+      if (!loadIframe) {
+        setVideoLoading(true);
+        setLoadIframe(true);
+        // Hide loading after iframe loads
+        setTimeout(() => {
+          setVideoLoading(false);
+        }, 1500);
+      }
+    };
+    
+    return (
+      <motion.div
+        className={`relative overflow-hidden bg-black group ${className}`}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        style={isYouTubeThumbnail ? { aspectRatio: "16/9" } : { aspectRatio: "5/2" }}
+        onClick={() => handleImageClick(product)}
+        onMouseEnter={handleMouseEnter}
+      >
+        <div className="relative w-full h-full group overflow-hidden">
+         
+          {/* Always show YouTube thumbnail for instant loading */}
+          {getYouTubeWatchUrl(product.youtubeLink) ? (
+            <>
+              <img
+                src={`https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/maxresdefault.jpg`}
+                alt={product?.productTitle || "YouTube Thumbnail"}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                onError={(e) => {
+                  // Try HD quality first, then fallback to standard
+                  if (e.target.src.includes('maxresdefault')) {
+                    e.target.src = `https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/hq720.jpg`;
+                  } else if (e.target.src.includes('hq720')) {
+                    e.target.src = `https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/hqdefault.jpg`;
+                  }
+                }}
+              />
+              
+              {/* Only load iframe on hover for performance */}
+              {loadIframe && !isYouTubeThumbnail && (
+                <iframe
+                  src={`${getYouTubeEmbedUrl(product.youtubeLink)}&autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&start=30&vq=hd720`}
+                  title={product.productTitle || "Video"}
+                  className="w-full h-full absolute inset-0 pointer-events-none"
+                  style={{
+                    width: '150%',
+                    height: '150%',
+                    top: '-25%',
+                    left: '-25%',
+                    border: 'none',
+                    margin: 0,
+                    padding: 0,
+                    transform: 'scale(1.3)',
+                    transformOrigin: 'center center'
+                  }}
+                  frameBorder="0"
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              )}
+            </>
+          ) : getYouTubeEmbedUrl(product.youtubeLink) && !getYouTubeWatchUrl(product.youtubeLink) ? (
+            <>
+              <img
+                src={`https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/maxresdefault.jpg`}
+                alt={product?.productTitle || "YouTube Thumbnail"}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                onError={(e) => {
+                  if (e.target.src.includes('maxresdefault')) {
+                    e.target.src = `https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/hq720.jpg`;
+                  } else if (e.target.src.includes('hq720')) {
+                    e.target.src = `https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/hqdefault.jpg`;
+                  }
+                }}
+              />
+              {loadIframe && (
+                <iframe
+                  src={`${getYouTubeEmbedUrl(product.youtubeLink)}&autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&start=30&vq=hd720`}
+                  title={product.productTitle || "Video"}
+                  className="w-full h-full absolute inset-0 pointer-events-none"
+                  style={{
+                    width: '150%',
+                    height: '150%',
+                    top: '-25%',
+                    left: '-25%',
+                    border: 'none',
+                    margin: 0,
+                    padding: 0,
+                    transform: 'scale(1.3)',
+                    transformOrigin: 'center center'
+                  }}
+                  frameBorder="0"
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              )}
+            </>
         ) : product?.videoFile ? (
           <video
             src={product.videoFile}
@@ -727,7 +835,10 @@ const CategoryShowcase = ({ category, title }) => {
             loop
             playsInline
             autoPlay
+            onLoadStart={() => setVideoLoading(true)}
             onLoadedData={(e) => {
+              // Hide loading when video is ready
+              setVideoLoading(false);
               // Start playing immediately when video loads
               e.target.play().catch((error) => {
                 console.log('Video autoplay failed:', error);
@@ -748,6 +859,16 @@ const CategoryShowcase = ({ category, title }) => {
             alt={product?.productTitle || product?.name || "Product"}
             className="w-full h-full object-cover"
           />
+        )}
+
+        {/* Loading Spinner - Show when loading iframe */}
+        {videoLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 z-25">
+            <div className="flex flex-col items-center">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white mb-2"></div>
+              <p className="text-white text-xs">Loading...</p>
+            </div>
+          </div>
         )}
 
         {/* Click-through overlay to ensure navigation */}
@@ -782,7 +903,8 @@ const CategoryShowcase = ({ category, title }) => {
         )}
       </div>
     </motion.div>
-  );
+    );
+  };
 
   if (isLoading) {
     return (

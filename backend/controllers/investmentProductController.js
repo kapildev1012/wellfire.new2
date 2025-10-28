@@ -379,6 +379,9 @@ const listInvestmentProducts = async(req, res) => {
         if (featured !== undefined) filter.isFeatured = featured === "true";
         if (active !== undefined && active !== "") filter.isActive = active === "true";
 
+        console.log("🔍 List products - Filter:", JSON.stringify(filter));
+        console.log("🔍 Query params:", req.query);
+
         const sort = {};
         sort[sortBy] = sortOrder === "desc" ? -1 : 1;
 
@@ -388,6 +391,8 @@ const listInvestmentProducts = async(req, res) => {
             .sort(sort)
             .skip(skip)
             .limit(Number(limit));
+        
+        console.log("📦 Found products:", products.length);
 
         const productsWithFunding = await Promise.all(
             products.map(async(product) => {

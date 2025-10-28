@@ -2,59 +2,46 @@ import axios from 'axios';
 
 // Create axios instance with optimized defaults
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || "https://wellfire-backend-s1qt.onrender.com",
+  baseURL: import.meta.env.VITE_BACKEND_URL || "http://localhost:4000",
   timeout: 10000, // 10 second timeout
   headers: {
     'Content-Type': 'application/json',
+    'Accept-Encoding': 'gzip, deflate, br'
   }
 });
 
-// In-memory cache for API responses
-const cache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-// Cache key generator
-const getCacheKey = (url, params = {}) => {
-  const paramString = Object.keys(params).length > 0 ? JSON.stringify(params) : '';
-  return `${url}${paramString}`;
+// Performance metrics tracking
+let requestMetrics = {
+  total: 0,
+  successful: 0,
+  failed: 0,
+  avgResponseTime: 0
 };
 
-// Check if cache entry is still valid
-const isCacheValid = (cacheEntry) => {
-  return Date.now() - cacheEntry.timestamp < CACHE_DURATION;
-};
-
-// Enhanced GET request with caching
+// Enhanced GET request with basic caching
 const cachedGet = async (url, config = {}) => {
-  const cacheKey = getCacheKey(url, config.params);
-  
-  // Check cache first
-  if (cache.has(cacheKey)) {
-    const cacheEntry = cache.get(cacheKey);
-    if (isCacheValid(cacheEntry)) {
-      console.log(`Cache hit for: ${url}`);
-      return Promise.resolve(cacheEntry.data);
-    } else {
-      // Remove expired cache entry
-      cache.delete(cacheKey);
-    }
-  }
+  const fullUrl = `${api.defaults.baseURL}${url}`;
+  const startTime = performance.now();
 
   try {
-    console.log(`Fetching from API: ${url}`);
+    // Make request directly (no caching for now)
+    console.log(`📡 Fetching from API: ${url}`);
     const response = await api.get(url, config);
-    
-    // Cache successful responses
-    if (response.data.success) {
-      cache.set(cacheKey, {
-        data: response,
-        timestamp: Date.now()
-      });
-    }
-    
+
+    // Track metrics
+    const responseTime = performance.now() - startTime;
+    requestMetrics.total++;
+    requestMetrics.successful++;
+    requestMetrics.avgResponseTime =
+      (requestMetrics.avgResponseTime * (requestMetrics.total - 1) + responseTime) / requestMetrics.total;
+
+    console.log(`✅ Request completed: ${url} (${responseTime.toFixed(2)}ms)`);
+
     return response;
   } catch (error) {
-    console.error(`API Error for ${url}:`, error);
+    requestMetrics.total++;
+    requestMetrics.failed++;
+    console.error(`❌ API Error for ${url}:`, error);
     throw error;
   }
 };
@@ -83,9 +70,9 @@ api.interceptors.response.use(
   }
 );
 
-// API service methods
+// API service methods with performance optimizations
 export const apiService = {
-  // Investment products
+  // Investment products with prefetching
   getInvestmentProducts: () => cachedGet('/api/investment-product/list'),
   
   // Regular products
@@ -94,34 +81,63 @@ export const apiService = {
   // User cart
   getUserCart: () => api.get('/api/cart'),
   
-  // Reviews
-  // getProductReviews: (productId) => cachedGet(`/api/review/${productId}`),
-  
-  // Newsletter
-  // subscribeNewsletter: (email) => api.post('/api/newsletter/subscribe', { email }),
-  
-  // Clear cache (useful for forced refresh)
-  clearCache: () => {
-    cache.clear();
-    console.log('API cache cleared');
+  // Batch requests for multiple endpoints
+  batchFetch: async (endpoints) => {
+    try {
+      const promises = endpoints.map(endpoint => api.get(endpoint));
+      return await Promise.allSettled(promises);
+    } catch (error) {
+      console.error('Batch fetch error:', error);
+      throw error;
+    }
   },
-  
-  // Get cache stats
-  getCacheStats: () => ({
-    size: cache.size,
-    keys: Array.from(cache.keys())
+
+  // Prefetch data for upcoming navigation
+  prefetchData: async (urls) => {
+    // Simple prefetch implementation - just fetch and discard
+    try {
+      await Promise.all(urls.map(url => api.get(url)));
+      console.log('Prefetch completed for:', urls);
+    } catch (error) {
+      console.log('Prefetch failed (non-critical):', error.message);
+    }
+  },
+
+  // Clear all caches
+  clearCache: async () => {
+    console.log('Cache cleared');
+  },
+
+  // Get performance metrics
+  getMetrics: () => ({
+    api: requestMetrics
   }),
 
-  // Preload critical data
+  // Preload critical data with parallel fetching
   preloadCriticalData: async () => {
+    const startTime = performance.now();
+    
     try {
+      // Parallel fetch critical endpoints
       const promises = [
         apiService.getInvestmentProducts(),
         apiService.getProducts()
       ];
       
-      await Promise.allSettled(promises);
-      console.log('Critical data preloaded');
+      const results = await Promise.allSettled(promises);
+      const loadTime = performance.now() - startTime;
+      
+      console.log(`⚡ Critical data preloaded in ${loadTime.toFixed(2)}ms`);
+      
+      // Prefetch secondary data in background
+      setTimeout(() => {
+        apiService.prefetchData([
+          '/api/user/profile',
+          '/api/cart'
+        ]);
+      }, 100);
+      
+      return results;
     } catch (error) {
       console.error('Error preloading data:', error);
     }

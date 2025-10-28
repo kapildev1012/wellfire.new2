@@ -86,6 +86,7 @@ const CategoryShowcase = ({ category, title }) => {
             `✅ Products loaded for ${category}:`,
             response.data.products.length
           );
+        } else {
           console.log(`❌ API returned success: false or no products`);
         }
       } catch (error) {

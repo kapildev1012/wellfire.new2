@@ -33,12 +33,13 @@ console.log('📤 Uploading video...');
 console.log(`   File: ${videoPath}`);
 console.log('   This may take 2-5 minutes for a 390 MB file...\n');
 
-// Upload video
-cloudinary.uploader.upload(videoPath, {
+// Upload video with chunked upload for large files
+cloudinary.uploader.upload_large(videoPath, {
   resource_type: 'video',
   public_id: 'hero',
   folder: 'wellfire',
   overwrite: true,
+  chunk_size: 6000000, // 6MB chunks
   // Optional: Add transformations
   eager: [
     { quality: 'auto', fetch_format: 'auto' }

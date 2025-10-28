@@ -67,8 +67,8 @@ const Footer = () => {
               
               {/* Address */}
               <div className="space-y-1 text-white/80 text-sm sm:text-base font-light tracking-wide">
-                <p>info.wellfire@gmail.com</p>
-                <p>careers.wellfire@gmail.com</p>
+                <p>info@thewellfire.com</p>
+                <p>careers@thewellfire.com</p>
                 <p>+91 7710000706</p>
                 <p>+91 7506312117</p>
               </div>

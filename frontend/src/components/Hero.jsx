@@ -1,6 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import heroVideo from "../assets/hero.mp4";
+
+// TODO: Replace with your Cloudinary URL after uploading hero.mp4
+// Follow instructions in upload-video.md
+// Your video: /Users/kapildev/Desktop/wellfire.new2/frontend/src/assets/hero.mp4 (390 MB)
+const heroVideo = "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
 const Hero = () => {
   const videoRef = useRef(null);

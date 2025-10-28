@@ -253,7 +253,7 @@ const Contact = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        to: 'kapil16072004@gmail.com',
+        to: 'info@thewellfire.com',
         subject: `New Talent Application - ${formData.name}`,
         text: `New talent application received:\n\nName: ${formData.name}\nStage Name: ${formData.stageName || "Not provided"}\nPhone: ${formData.contact}\nEmail: ${formData.email}\nIndustry: ${formData.industry || "Not specified"}\n\nMessage:\n${formData.message}\n\nApplication submitted on: ${new Date().toLocaleString()}`,
         html: `
@@ -369,7 +369,7 @@ const Contact = () => {
 
   const handleQuickEmail = () => {
     window.location.href =
-      "mailto:info.wellfire@gmail.com?subject=Quick Inquiry - WELLFIRE Entertainment";
+      "mailto:info@thewellfire.com?subject=Quick Inquiry - WELLFIRE Entertainment";
   };
 
   return (

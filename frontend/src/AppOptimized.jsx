@@ -238,7 +238,7 @@ const AppOptimized = () => {
               }
             />
             <Route
-              path="/investor/:id"
+              path="/investorproduct/:id?"
               element={
                 <PageTransition>
                   <InvestorProduct />

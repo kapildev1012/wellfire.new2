@@ -153,7 +153,7 @@ router.post('/send-partnership-email', async (req, res) => {
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: 'kapil16072004@gmail.com', // Partnership emails go to the original email
+            to: 'info@thewellfire.com', // Partnership emails go to Wellfire
             subject: `New Partnership Application - ${name}`,
             html: htmlContent,
             text: `New partnership application received:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nWebsite: ${website || 'Not provided'}\nCompany Details: ${companyDetail || 'Not provided'}\n\nProduct Info: ${productInfo || 'Not specified'}\n\nApplication submitted on: ${new Date().toLocaleString()}`

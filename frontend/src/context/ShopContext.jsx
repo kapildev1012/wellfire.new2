@@ -235,7 +235,8 @@ const ShopContextProvider = ({ children }) => {
     };
 
     return ( <
-        ShopContext.Provider value = { contextValue } > { children } < /ShopContext.Provider>
+        ShopContext.Provider value = { contextValue } > { children } <
+        /ShopContext.Provider>
     );
 };
 

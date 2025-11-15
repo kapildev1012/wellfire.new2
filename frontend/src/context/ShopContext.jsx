@@ -120,7 +120,7 @@ const ShopContextProvider = ({ children }) => {
     const addReview = async(productId, reviewData) => {
         try {
             const res = await axios.post(
-                `${url}/api/review/add`, { productId, review: reviewData }, { headers: { token } }
+                `${backendUrl}/api/review/add`, { productId, review: reviewData }, { headers: { token } }
             );
 
             if (res.data.success) {
@@ -137,7 +137,7 @@ const ShopContextProvider = ({ children }) => {
 
     const getProductReviews = async(productId) => {
         try {
-            const res = await axios.get(`${url}/api/review/${productId}`);
+            const res = await axios.get(`${backendUrl}/api/review/${productId}`);
             if (res.data.success) {
                 setReviews((prev) => ({...prev, [productId]: res.data.reviews }));
             }
@@ -147,41 +147,30 @@ const ShopContextProvider = ({ children }) => {
         }
     };
 
-    // 📦 Fetch Products from API
+    // 📦 Use Static Products Data
     const getProductsData = async() => {
-        try {
-            const response = await axios.get(`${url}/api/investment-product/list`);
-            if (response.data.success) {
-                setProducts(response.data.products || []);
-            } else {
-                console.error('Failed to fetch products:', response.data.message);
-                toast.error('Failed to load products');
+        // Use static demo products instead of API call
+        const demoProducts = [{
+                _id: "demo1",
+                name: "Demo Product 1",
+                price: 999,
+                image: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"],
+                category: "Demo",
+                sizes: ["S", "M", "L"],
+                description: "Demo product for testing"
+            },
+            {
+                _id: "demo2",
+                name: "Demo Product 2",
+                price: 1299,
+                image: ["https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"],
+                category: "Demo",
+                sizes: ["S", "M", "L"],
+                description: "Another demo product"
             }
-        } catch (error) {
-            console.error('Error fetching products:', error);
-            // Fallback to demo products if API fails
-            const demoProducts = [{
-                    _id: "demo1",
-                    name: "Demo Product 1",
-                    price: 999,
-                    image: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"],
-                    category: "Demo",
-                    sizes: ["S", "M", "L"],
-                    description: "Demo product for testing"
-                },
-                {
-                    _id: "demo2",
-                    name: "Demo Product 2",
-                    price: 1299,
-                    image: ["https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"],
-                    category: "Demo",
-                    sizes: ["S", "M", "L"],
-                    description: "Another demo product"
-                }
-            ];
-            setProducts(demoProducts);
-            toast.info('Using demo products - API unavailable');
-        }
+        ];
+
+        setProducts(demoProducts);
     };
 
     // 🛒 Use Local Cart Storage
@@ -218,7 +207,6 @@ const ShopContextProvider = ({ children }) => {
         currency,
         delivery_fee,
         backendUrl,
-        url,
         navigate,
         token,
         setToken,

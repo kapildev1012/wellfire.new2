@@ -70,13 +70,13 @@ const ListInvestmentProducts = ({ token }) => {
 
             if (response.data.success) {
                 console.log('API Response:', response.data);
-                console.log('Products received:', response.data.products ? .length);
+                console.log('Products received:', response.data.products?.length);
                 console.log('Pagination info:', response.data.pagination);
 
                 setProducts(response.data.products || []);
-                setCurrentPage(response.data.pagination ? .currentPage || 1);
-                setTotalPages(response.data.pagination ? .totalPages || 1);
-                setTotalProducts(response.data.pagination ? .totalProducts || response.data.products ? .length || 0);
+                setCurrentPage(response.data.pagination?.currentPage || 1);
+                setTotalPages(response.data.pagination?.totalPages || 1);
+                setTotalProducts(response.data.pagination?.totalProducts || response.data.products?.length || 0);
 
                 // Update URL without page reload
                 const url = new URL(window.location);
@@ -87,8 +87,8 @@ const ListInvestmentProducts = ({ token }) => {
             console.error("Fetch products error:", error);
             console.error("Error details:", {
                 message: error.message,
-                response: error.response ? .data,
-                status: error.response ? .status,
+                response: error.response?.data,
+                status: error.response?.status,
                 url: `${backendUrl}/api/investment-product/list`
             });
             toast.error(`Failed to fetch products: ${error.response?.data?.message || error.message}`);
@@ -349,8 +349,8 @@ const ListInvestmentProducts = ({ token }) => {
         return ( <
             div className = "flex justify-center items-center h-screen" >
             <
-            div className = "animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600" > < /div> <
-            /div>
+            div className = "animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600" > < /div> < /
+            div >
         );
     }
 
@@ -371,19 +371,20 @@ const ListInvestmentProducts = ({ token }) => {
         /div> <
         div className = "bg-gray-800 text-white px-3 py-1 text-sm font-bold tracking-wider border border-gray-600" >
         ADMIN <
-        /div> <
-        /div> <
+        /div> < /
+        div > <
         h1 className = "text-4xl font-bold text-white tracking-tight mb-3" >
         Investment Products <
         /h1> <
         p className = "text-gray-300 text-lg font-medium max-w-2xl" >
         Manage your investment portfolio with precision and control <
-        /p> <
-        /div> <
+        /p> < /
+        div > <
         div className = "flex flex-col sm:flex-row gap-4" >
         <
         button onClick = {
-            () => window.location.href = '/add' }
+            () => window.location.href = '/add'
+        }
         className = "px-8 py-4 bg-white text-black rounded-none hover:bg-gray-200 transition-all duration-200 font-bold text-lg border-2 border-white shadow-lg hover:shadow-xl flex items-center gap-3 group" >
         <
         svg className = "w-6 h-6 group-hover:rotate-90 transition-transform duration-200"
@@ -395,16 +396,17 @@ const ListInvestmentProducts = ({ token }) => {
         strokeLinejoin = "round"
         strokeWidth = "2"
         d = "M12 4v16m8-8H4" >
-        < /path> <
-        /svg> <
+        <
+        /path> < /
+        svg > <
         span className = "tracking-wider" >
         ADD NEW PRODUCT <
-        /span> <
-        /button> <
-        /div> <
-        /div> <
-        /div> <
-        /div>
+        /span> < /
+        button > <
+        /div> < /
+        div > <
+        /div> < /
+        div >
 
         <
         div className = "max-w-7xl mx-auto px-6 lg:px-8 py-10" > { /* Analytics Dashboard */ } <
@@ -420,8 +422,8 @@ const ListInvestmentProducts = ({ token }) => {
         /h2> <
         p className = "text-xs text-gray-600 font-medium max-w-2xl" >
         Real - time overview of your investment portfolio <
-        /p> <
-        /div> <
+        /p> < /
+        div > <
         div className = "flex gap-2" >
         <
         button onClick = { fetchAnalytics }
@@ -429,13 +431,13 @@ const ListInvestmentProducts = ({ token }) => {
         REFRESH <
         /button> <
         button onClick = {
-            () => setViewMode(viewMode === "grid" ? "table" : "grid") }
-        className = "px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-all duration-200 font-bold text-xs" >
-        { viewMode === "grid" ? "TABLE" : "GRID" } <
-        /button> <
-        /div> <
-        /div> <
-        /div>
+            () => setViewMode(viewMode === "grid" ? "table" : "grid")
+        }
+        className = "px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-all duration-200 font-bold text-xs" > { viewMode === "grid" ? "TABLE" : "GRID" } <
+        /button> < /
+        div > <
+        /div> < /
+        div >
 
         { /* Main Analytics Cards */ } <
         div className = "p-4" >
@@ -457,10 +459,11 @@ const ListInvestmentProducts = ({ token }) => {
         strokeLinejoin = "round"
         strokeWidth = "2"
         d = "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" >
-        < /path> <
-        /svg> <
-        /div> <
-        /div> <
+        <
+        /path> < /
+        svg > <
+        /div> < /
+        div > <
         div >
         <
         p className = "text-xs font-bold text-white mb-1 uppercase tracking-wide" >
@@ -470,8 +473,8 @@ const ListInvestmentProducts = ({ token }) => {
         /p> <
         p className = "text-xs text-blue-100 font-medium" >
         Active items <
-        /p> <
-        /div> <
+        /p> < /
+        div > <
         /div>
 
         <
@@ -490,10 +493,11 @@ const ListInvestmentProducts = ({ token }) => {
         strokeLinejoin = "round"
         strokeWidth = "2"
         d = "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" >
-        < /path> <
-        /svg> <
-        /div> <
-        /div> <
+        <
+        /path> < /
+        svg > <
+        /div> < /
+        div > <
         div >
         <
         p className = "text-xs font-bold text-white mb-1 uppercase tracking-wide" >
@@ -503,8 +507,8 @@ const ListInvestmentProducts = ({ token }) => {
         /p> <
         p className = "text-xs text-green-100 font-medium" >
         Investment value <
-        /p> <
-        /div> <
+        /p> < /
+        div > <
         /div>
 
         <
@@ -523,10 +527,11 @@ const ListInvestmentProducts = ({ token }) => {
         strokeLinejoin = "round"
         strokeWidth = "2"
         d = "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" >
-        < /path> <
-        /svg> <
-        /div> <
-        /div> <
+        <
+        /path> < /
+        svg > <
+        /div> < /
+        div > <
         div >
         <
         p className = "text-xs font-bold text-white mb-1 uppercase tracking-wide" >
@@ -536,8 +541,8 @@ const ListInvestmentProducts = ({ token }) => {
         /p> <
         p className = "text-xs text-orange-100 font-medium" >
         Seeking funds <
-        /p> <
-        /div> <
+        /p> < /
+        div > <
         /div>
 
         <
@@ -556,10 +561,11 @@ const ListInvestmentProducts = ({ token }) => {
         strokeLinejoin = "round"
         strokeWidth = "2"
         d = "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" >
-        < /path> <
-        /svg> <
-        /div> <
-        /div> <
+        <
+        /path> < /
+        svg > <
+        /div> < /
+        div > <
         div >
         <
         p className = "text-xs font-bold text-white mb-1 uppercase tracking-wide" >
@@ -569,8 +575,8 @@ const ListInvestmentProducts = ({ token }) => {
         /p> <
         p className = "text-xs text-purple-100 font-medium" >
         Successfully funded <
-        /p> <
-        /div> <
+        /p> < /
+        div > <
         /div>
 
         <
@@ -605,16 +611,17 @@ const ListInvestmentProducts = ({ token }) => {
                         width: `${(count / products.length) * 100}%`,
                     }
                 } >
-                < /div> <
-                /div> <
+                <
+                /div> < /
+                div > <
                 span className = "text-xs font-bold text-black min-w-4" > { count } <
-                /span> <
-                /div> <
+                /span> < /
+                div > <
                 /div>
             ))
         } <
-        /div> <
-        /div>
+        /div> < /
+        div >
 
         { /* Funding Status Overview */ } <
         div className = "bg-gray-50 border border-gray-200 rounded-lg p-4" >
@@ -645,16 +652,17 @@ const ListInvestmentProducts = ({ token }) => {
                         width: `${(count / products.length) * 100}%`,
                     }
                 } >
-                < /div> <
-                /div> <
+                <
+                /div> < /
+                div > <
                 span className = "text-xs font-bold text-black min-w-4" > { count } <
-                /span> <
-                /div> <
+                /span> < /
+                div > <
                 /div>
             ))
         } <
-        /div> <
-        /div> <
+        /div> < /
+        div > <
         /div>
 
         { /* Performance Metrics */ } <
@@ -671,15 +679,14 @@ const ListInvestmentProducts = ({ token }) => {
                 (analytics.completedProjects /
                     analytics.totalProducts) *
                 100
-            ).toFixed(1) :
-                0
+            ).toFixed(1) : 0
         } %
         <
         /p> <
         p className = "text-xs text-gray-600 font-medium" >
         Projects successfully funded <
-        /p> <
-        /div>
+        /p> < /
+        div >
 
         <
         div className = "bg-white border-2 border-black p-4 hover:shadow-md transition-all duration-300" >
@@ -697,27 +704,25 @@ const ListInvestmentProducts = ({ token }) => {
                 (products.reduce((total, product) => total + (product.currentFunding || 0), 0) /
                     products.reduce((total, product) => total + (product.totalBudget || 0), 0)) *
                 100
-            ).toFixed(1) :
-                0
+            ).toFixed(1) : 0
         } %
         <
         /p> <
-        p className = "text-[10px] text-gray-500" > Total Fund Efficiency < /p> <
-        /div> <
+        p className = "text-[10px] text-gray-500" > Total Fund Efficiency < /p> < /
+        div > <
         div >
         <
         p className = "text-sm font-bold text-orange-600" > {
             products.length > 0 ?
             formatCurrency(
                 products.reduce((total, product) => total + (product.totalBudget || 0), 0) / products.length
-            ) :
-                formatCurrency(0)
+            ) : formatCurrency(0)
         } <
         /p> <
-        p className = "text-[10px] text-gray-500" > Average Portfolio Value < /p> <
-        /div> <
-        /div> <
-        /div>
+        p className = "text-[10px] text-gray-500" > Average Portfolio Value < /p> < /
+        div > <
+        /div> < /
+        div >
 
         <
         div className = "bg-white border-2 border-black p-4 hover:shadow-md transition-all duration-300" >
@@ -731,21 +736,21 @@ const ListInvestmentProducts = ({ token }) => {
         <
         p className = "text-sm font-bold text-blue-600" > { formatCurrency(products.reduce((total, product) => total + (product.totalBudget || 0), 0)) } <
         /p> <
-        p className = "text-[10px] text-gray-500" > Total Portfolio Value < /p> <
-        /div> <
+        p className = "text-[10px] text-gray-500" > Total Portfolio Value < /p> < /
+        div > <
         div >
         <
         p className = "text-sm font-bold text-green-600" > { formatCurrency(products.reduce((total, product) => total + (product.currentFunding || 0), 0)) } <
         /p> <
-        p className = "text-[10px] text-gray-500" > Total Investment Received < /p> <
-        /div> <
-        /div> <
-        /div> <
+        p className = "text-[10px] text-gray-500" > Total Investment Received < /p> < /
+        div > <
+        /div> < /
+        div > <
         /div>
 
         { /* Quick Actions removed as requested */ } <
-        /div> <
-        /div>
+        /div> < /
+        div >
 
         { /* Search and Filters */ } <
         div className = "bg-white rounded-xl shadow-md border border-gray-100 p-6 mb-8" >
@@ -760,12 +765,13 @@ const ListInvestmentProducts = ({ token }) => {
         placeholder = "Search products by title, artist, or description..."
         value = { searchTerm }
         onChange = {
-            (e) => setSearchTerm(e.target.value) }
+            (e) => setSearchTerm(e.target.value)
+        }
         className = "w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" /
         >
         <
-        span className = "absolute left-3 top-3 text-gray-400 text-xl" > < /span> <
-        /div> <
+        span className = "absolute left-3 top-3 text-gray-400 text-xl" > < /span> < /
+        div > <
         /div>
 
         <
@@ -790,8 +796,8 @@ const ListInvestmentProducts = ({ token }) => {
         option value = "Media Production" > Media Production < /option> <
         option value = "Line Production Services" > Line Production Services < /option> <
         option value = "Government Subsidy Guidance" > Government Subsidy Guidance < /option> <
-        option value = "Other" > Other < /option> <
-        /select>
+        option value = "Other" > Other < /option> < /
+        select >
 
         <
         select value = { filters.status }
@@ -808,27 +814,26 @@ const ListInvestmentProducts = ({ token }) => {
         option value = "funding" > Funding < /option> <
         option value = "in-production" > In Production < /option> <
         option value = "completed" > Completed < /option> <
-        option value = "cancelled" > Cancelled < /option> <
-        /select>
+        option value = "cancelled" > Cancelled < /option> < /
+        select >
 
 
         <
-        /div> <
-        /div> <
+        /div> < /
+        div > <
         /div>
 
         { /* Products Display */ } <
         div className = "mb-4" >
         <
         p className = "text-sm text-gray-600" > Displaying { products.length }
-        products < /p> <
-        /div> {
+        products < /p> < /
+        div > {
             viewMode === "grid" ? ( <
                 div className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4" > {
                     products.map((product) => ( <
                         div key = { product._id }
-                        className = "bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl hover:scale-105 transition-all duration-300 overflow-hidden group" >
-                        { /* Product Image */ } <
+                        className = "bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl hover:scale-105 transition-all duration-300 overflow-hidden group" > { /* Product Image */ } <
                         div className = "relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden" > {
                             product.coverImage ? ( <
                                 >
@@ -851,10 +856,9 @@ const ListInvestmentProducts = ({ token }) => {
                         <
                         span className = { `px-2 py-1 rounded-full text-[10px] font-semibold text-white shadow-lg ${getStatusColor(
                         product.productStatus
-                      )}` } >
-                        { product.productStatus.toUpperCase() } <
-                        /span> <
-                        /div>
+                      )}` } > { product.productStatus.toUpperCase() } <
+                        /span> < /
+                        div >
 
                         { /* Featured Badge */ } {
                             product.isFeatured && ( <
@@ -862,8 +866,8 @@ const ListInvestmentProducts = ({ token }) => {
                                 <
                                 span className = "bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded-full text-[10px] font-semibold shadow-lg" >
                                 FEATURED <
-                                /span> <
-                                /div>
+                                /span> < /
+                                div >
                             )
                         }
 
@@ -881,8 +885,8 @@ const ListInvestmentProducts = ({ token }) => {
                         by { product.artistName } <
                         /p> <
                         p className = "text-gray-600 text-[10px]" > { product.category } { product.genre && ` • ${product.genre}` } <
-                        /p> <
-                        /div>
+                        /p> < /
+                        div >
 
                         { /* Funding Progress */ } <
                         div className = "bg-gradient-to-r from-blue-50 to-purple-50 p-1 rounded border border-blue-100" >
@@ -893,12 +897,12 @@ const ListInvestmentProducts = ({ token }) => {
                         <
                         span className = "font-medium" > Goal: < /span> <
                         span className = "text-blue-600 font-semibold ml-1" > { formatCurrency(product.totalBudget) } <
-                        /span> <
-                        /div> <
+                        /span> < /
+                        div > <
                         div className = "text-red-600 font-medium" > { formatCurrency((product.totalBudget - (product.currentFunding || 0)).toFixed(0)) }
                         remaining <
-                        /div> <
-                        /div> <
+                        /div> < /
+                        div > <
                         div className = "w-full bg-white rounded-full h-2 shadow-inner hover:shadow-md transition-all duration-300 cursor-pointer" >
                         <
                         div className = "bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500 hover:from-blue-600 hover:to-purple-600 hover:shadow-lg"
@@ -910,8 +914,9 @@ const ListInvestmentProducts = ({ token }) => {
                           ))}%`,
                             }
                         } >
-                        < /div> <
-                        /div> <
+                        <
+                        /div> < /
+                        div > <
                         /div>
 
 
@@ -920,7 +925,8 @@ const ListInvestmentProducts = ({ token }) => {
                         <
                         span className = "text-[10px] text-gray-600 font-medium" > Status: < /span> <
                         button onClick = {
-                            () => openStatusModal(product) }
+                            () => openStatusModal(product)
+                        }
                         className = { `px-2 py-0.5 rounded-full text-[9px] font-semibold transition-all duration-200 hover:scale-105 ${
                         product.productStatus === 'completed'
                           ? "bg-green-100 text-green-800 hover:bg-green-200"
@@ -929,12 +935,11 @@ const ListInvestmentProducts = ({ token }) => {
                           : product.productStatus === 'in-production'
                           ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }` } >
-                        {
+                      }` } > {
                             product.productStatus === 'completed' ? 'Completed' : product.productStatus === 'funding' ? 'Funding' : product.productStatus === 'in-production' ? 'In Production' : product.productStatus === 'cancelled' ? 'Cancelled' : product.productStatus || 'Unknown'
                         } <
-                        /button> <
-                        /div>
+                        /button> < /
+                        div >
 
                         { /* Action Buttons */ } <
                         div className = "flex flex-col gap-2" >
@@ -942,31 +947,35 @@ const ListInvestmentProducts = ({ token }) => {
                         div className = "flex gap-2" >
                         <
                         button onClick = {
-                            () => openDetailsModal(product) }
+                            () => openDetailsModal(product)
+                        }
                         className = "flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-1 px-1.5 rounded text-[9px] font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm hover:shadow-md" >
                         Details <
                         /button> <
                         button onClick = {
-                            () => openFundingModal(product) }
+                            () => openFundingModal(product)
+                        }
                         className = "flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-1 px-1.5 rounded text-[9px] font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-sm hover:shadow-md" >
                         Manage <
                         /button> <
                         button onClick = {
-                            () => removeProduct(product._id) }
+                            () => removeProduct(product._id)
+                        }
                         className = "flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white py-1 px-1.5 rounded text-[9px] font-semibold hover:from-red-700 hover:to-red-800 transition-all duration-200 shadow-sm hover:shadow-md" >
                         Delete <
-                        /button> <
-                        /div> <
+                        /button> < /
+                        div > <
                         button onClick = {
-                            () => openBudgetModal(product) }
+                            () => openBudgetModal(product)
+                        }
                         className = "w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-1 px-1.5 rounded text-[9px] font-semibold hover:from-purple-700 hover:to-purple-800 transition-all duration-200 shadow-sm hover:shadow-md" >
                         Edit Total Budget(₹) <
-                        /button> <
-                        /div>
+                        /button> < /
+                        div >
 
                         <
-                        /div> <
-                        /div>
+                        /div> < /
+                        div >
                     ))
                 } <
                 /div>
@@ -997,8 +1006,8 @@ const ListInvestmentProducts = ({ token }) => {
                 /th> <
                 th className = "text-left py-3 px-4 font-semibold text-gray-900 text-sm" >
                 Actions <
-                /th> <
-                /tr> <
+                /th> < /
+                tr > <
                 /thead> <
                 tbody className = "divide-y divide-gray-200" > {
                     products.map((product) => ( <
@@ -1020,23 +1029,22 @@ const ListInvestmentProducts = ({ token }) => {
                         /div> <
                         div className = "text-xs text-gray-600" >
                         by { product.artistName } <
-                        /div> <
-                        /div> <
-                        /div> <
-                        /td> <
+                        /div> < /
+                        div > <
+                        /div> < /
+                        td > <
                         td className = "py-3 px-4" >
                         <
                         span className = "px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-xs" > { product.category } <
-                        /span> <
-                        /td> <
+                        /span> < /
+                        td > <
                         td className = "py-3 px-4" >
                         <
                         span className = { `px-2 py-0.5 rounded-full text-xs font-semibold text-white ${getStatusColor(
                             product.productStatus
-                          )}` } >
-                        { product.productStatus } <
-                        /span> <
-                        /td> <
+                          )}` } > { product.productStatus } <
+                        /span> < /
+                        td > <
                         td className = "py-3 px-4" >
                         <
                         div className = "text-xs" >
@@ -1057,10 +1065,11 @@ const ListInvestmentProducts = ({ token }) => {
                                 )}%`,
                             }
                         } >
-                        < /div> <
-                        /div> <
-                        /div> <
-                        /td> <
+                        <
+                        /div> < /
+                        div > <
+                        /div> < /
+                        td > <
                         td className = "py-3 px-4" >
                         <
                         div className = "flex flex-col gap-1" >
@@ -1068,30 +1077,33 @@ const ListInvestmentProducts = ({ token }) => {
                         div className = "flex gap-1" >
                         <
                         button onClick = {
-                            () => openDetailsModal(product) }
+                            () => openDetailsModal(product)
+                        }
                         className = "bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs hover:bg-blue-200" >
                         View <
                         /button> <
                         button onClick = {
-                            () => openFundingModal(product) }
+                            () => openFundingModal(product)
+                        }
                         className = "bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs hover:bg-green-200" >
                         Manage <
-                        /button> <
-                        /div> <
+                        /button> < /
+                        div > <
                         button onClick = {
-                            () => openBudgetModal(product) }
+                            () => openBudgetModal(product)
+                        }
                         className = "bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs hover:bg-purple-200 w-full" >
                         Edit Budget <
-                        /button> <
-                        /div> <
-                        /td> <
-                        /tr>
+                        /button> < /
+                        div > <
+                        /td> < /
+                        tr >
                     ))
                 } <
-                /tbody> <
-                /table> <
-                /div> <
-                /div>
+                /tbody> < /
+                table > <
+                /div> < /
+                div >
             )
         }
 
@@ -1108,11 +1120,12 @@ const ListInvestmentProducts = ({ token }) => {
                 Try adjusting your search or filters <
                 /p> <
                 button onClick = {
-                    () => (window.location.href = "/add") }
+                    () => (window.location.href = "/add")
+                }
                 className = "px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700" >
                 Add Your First Product <
-                /button> <
-                /div>
+                /button> < /
+                div >
             )
         } <
         /div>
@@ -1130,20 +1143,20 @@ const ListInvestmentProducts = ({ token }) => {
                 Manage Funding <
                 /h3> <
                 button onClick = {
-                    () => setShowFundingModal(false) }
-                className = "text-gray-400 hover:text-gray-600 text-2xl" >
-                ✕
+                    () => setShowFundingModal(false)
+                }
+                className = "text-gray-400 hover:text-gray-600 text-2xl" > ✕
                 <
-                /button> <
-                /div>
+                /button> < /
+                div >
 
                 <
                 div className = "mb-6" >
                 <
                 h4 className = "font-semibold text-lg" > { selectedProduct.productTitle } <
                 /h4> <
-                p className = "text-gray-600" > by { selectedProduct.artistName } < /p> <
-                /div>
+                p className = "text-gray-600" > by { selectedProduct.artistName } < /p> < /
+                div >
 
                 <
                 div className = "space-y-6" >
@@ -1173,8 +1186,8 @@ const ListInvestmentProducts = ({ token }) => {
                 className = "w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
                 min = "0"
                 max = { selectedProduct.totalBudget }
-                /> <
-                /div>
+                /> < /
+                div >
 
                 <
                 div >
@@ -1244,8 +1257,8 @@ const ListInvestmentProducts = ({ token }) => {
                 option value = "active" > Active < /option> <
                 option value = "paused" > Paused < /option> <
                 option value = "completed" > Completed < /option> <
-                option value = "cancelled" > Cancelled < /option> <
-                /select> <
+                option value = "cancelled" > Cancelled < /option> < /
+                select > <
                 /div>
 
                 <
@@ -1264,8 +1277,8 @@ const ListInvestmentProducts = ({ token }) => {
                     ).toFixed(1)
                 } %
                 <
-                /span> <
-                /div> <
+                /span> < /
+                div > <
                 div className = "w-full bg-white rounded-full h-3 mb-2" >
                 <
                 div className = "bg-gradient-to-r from-blue-500 to-green-500 h-3 rounded-full transition-all duration-500"
@@ -1277,8 +1290,9 @@ const ListInvestmentProducts = ({ token }) => {
                       )}%`,
                     }
                 } >
-                < /div> <
-                /div> <
+                <
+                /div> < /
+                div > <
                 div className = "flex justify-between text-xs text-gray-600" >
                 <
                 span >
@@ -1286,10 +1300,10 @@ const ListInvestmentProducts = ({ token }) => {
                 /span> <
                 span >
                 Goal: { formatCurrency(selectedProduct.totalBudget) } <
-                /span> <
-                /div> <
-                /div> <
-                /div>
+                /span> < /
+                div > <
+                /div> < /
+                div >
 
                 <
                 div className = "flex gap-3 mt-8" >
@@ -1304,13 +1318,14 @@ const ListInvestmentProducts = ({ token }) => {
                 Update Funding <
                 /button> <
                 button onClick = {
-                    () => setShowFundingModal(false) }
+                    () => setShowFundingModal(false)
+                }
                 className = "flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors font-semibold" >
                 Cancel <
-                /button> <
-                /div> <
-                /div> <
-                /div>
+                /button> < /
+                div > <
+                /div> < /
+                div >
             )
         }
 
@@ -1326,20 +1341,20 @@ const ListInvestmentProducts = ({ token }) => {
                 Edit Total Budget(₹) <
                 /h3> <
                 button onClick = {
-                    () => setShowBudgetModal(false) }
-                className = "text-gray-400 hover:text-gray-600 text-2xl" >
-                ✕
+                    () => setShowBudgetModal(false)
+                }
+                className = "text-gray-400 hover:text-gray-600 text-2xl" > ✕
                 <
-                /button> <
-                /div>
+                /button> < /
+                div >
 
                 <
                 div className = "mb-6" >
                 <
                 h4 className = "font-semibold text-lg" > { selectedProduct.productTitle } <
                 /h4> <
-                p className = "text-gray-600" > by { selectedProduct.artistName } < /p> <
-                /div>
+                p className = "text-gray-600" > by { selectedProduct.artistName } < /p> < /
+                div >
 
                 <
                 div className = "space-y-6" >
@@ -1374,8 +1389,8 @@ const ListInvestmentProducts = ({ token }) => {
                 p className = "text-xs text-gray-500 mt-1" >
                 This is the total funding goal
                 for the project <
-                /p> <
-                /div>
+                /p> < /
+                div >
 
                 <
                 div className = "bg-gradient-to-br from-purple-50 to-blue-50 p-4 rounded-xl" >
@@ -1389,25 +1404,24 @@ const ListInvestmentProducts = ({ token }) => {
                 <
                 span > New Total Budget: < /span> <
                 span className = "font-semibold text-purple-600" > { formatCurrency(budgetData.totalBudget || 0) } <
-                /span> <
-                /div> <
+                /span> < /
+                div > <
                 div className = "flex justify-between text-sm" >
                 <
                 span > Current Funding: < /span> <
                 span className = "font-semibold text-green-600" > { formatCurrency(selectedProduct.currentFunding || 0) } <
-                /span> <
-                /div> <
+                /span> < /
+                div > <
                 div className = "flex justify-between text-sm" >
                 <
                 span > New Funding Progress: < /span> <
                 span className = "font-semibold text-blue-600" > {
                     budgetData.totalBudget > 0 ?
-                    ((selectedProduct.currentFunding || 0) / budgetData.totalBudget * 100).toFixed(1) :
-                        0
+                    ((selectedProduct.currentFunding || 0) / budgetData.totalBudget * 100).toFixed(1) : 0
                 } %
                 <
-                /span> <
-                /div> <
+                /span> < /
+                div > <
                 div className = "w-full bg-white rounded-full h-3 mt-2" >
                 <
                 div className = "bg-gradient-to-r from-purple-500 to-blue-500 h-3 rounded-full transition-all duration-500"
@@ -1418,10 +1432,11 @@ const ListInvestmentProducts = ({ token }) => {
                           : 0}%`,
                     }
                 } >
-                < /div> <
-                /div> <
-                /div> <
-                /div> <
+                <
+                /div> < /
+                div > <
+                /div> < /
+                div > <
                 /div>
 
                 <
@@ -1436,13 +1451,14 @@ const ListInvestmentProducts = ({ token }) => {
                 Update Budget <
                 /button> <
                 button onClick = {
-                    () => setShowBudgetModal(false) }
+                    () => setShowBudgetModal(false)
+                }
                 className = "flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors font-semibold" >
                 Cancel <
-                /button> <
-                /div> <
-                /div> <
-                /div>
+                /button> < /
+                div > <
+                /div> < /
+                div >
             )
         }
 
@@ -1458,12 +1474,12 @@ const ListInvestmentProducts = ({ token }) => {
                 Update Status <
                 /h3> <
                 button onClick = {
-                    () => setShowStatusModal(false) }
-                className = "text-gray-400 hover:text-gray-600 text-2xl" >
-                ✕
+                    () => setShowStatusModal(false)
+                }
+                className = "text-gray-400 hover:text-gray-600 text-2xl" > ✕
                 <
-                /button> <
-                /div>
+                /button> < /
+                div >
 
                 <
                 div className = "space-y-4" >
@@ -1474,8 +1490,8 @@ const ListInvestmentProducts = ({ token }) => {
                 Product: { selectedProduct.productTitle } <
                 /label> <
                 label className = "block text-sm font-medium text-gray-700 mb-2" >
-                Current Status: < span className = "capitalize" > { selectedProduct.productStatus ? .replace("-", " ") } < /span> <
-                /label> <
+                Current Status: < span className = "capitalize" > { selectedProduct.productStatus?.replace("-", " ") } < /span> < /
+                label > <
                 /div>
 
                 <
@@ -1486,16 +1502,17 @@ const ListInvestmentProducts = ({ token }) => {
                 /label> <
                 select value = { statusData.productStatus }
                 onChange = {
-                    (e) => setStatusData({ productStatus: e.target.value }) }
+                    (e) => setStatusData({ productStatus: e.target.value })
+                }
                 className = "w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500" >
                 <
                 option value = "funding" > Funding < /option> <
                 option value = "in-production" > In Production < /option> <
                 option value = "completed" > Completed < /option> <
-                option value = "cancelled" > Cancelled < /option> <
-                /select> <
-                /div> <
-                /div>
+                option value = "cancelled" > Cancelled < /option> < /
+                select > <
+                /div> < /
+                div >
 
                 <
                 div className = "flex gap-3 mt-8" >
@@ -1509,13 +1526,14 @@ const ListInvestmentProducts = ({ token }) => {
                 Update Status <
                 /button> <
                 button onClick = {
-                    () => setShowStatusModal(false) }
+                    () => setShowStatusModal(false)
+                }
                 className = "flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors font-semibold" >
                 Cancel <
-                /button> <
-                /div> <
-                /div> <
-                /div>
+                /button> < /
+                div > <
+                /div> < /
+                div >
             )
         }
 
@@ -1535,15 +1553,15 @@ const ListInvestmentProducts = ({ token }) => {
                 /h3> <
                 p className = "text-gray-600" >
                 by { selectedProduct.artistName } <
-                /p> <
-                /div> <
+                /p> < /
+                div > <
                 button onClick = {
-                    () => setShowDetailsModal(false) }
-                className = "text-gray-400 hover:text-gray-600 text-2xl" >
-                ✕
+                    () => setShowDetailsModal(false)
+                }
+                className = "text-gray-400 hover:text-gray-600 text-2xl" > ✕
                 <
-                /button> <
-                /div> <
+                /button> < /
+                div > <
                 /div> <
                 div className = "p-6 space-y-6" > { /* Top summary with image and key facts */ } <
                 div className = "grid grid-cols-1 md:grid-cols-3 gap-6" >
@@ -1564,26 +1582,26 @@ const ListInvestmentProducts = ({ token }) => {
                 <
                 div className = "text-xs text-gray-500" > Category < /div> <
                 div className = "text-sm font-semibold text-gray-900" > { selectedProduct.category || "-" } <
-                /div> <
-                /div> <
+                /div> < /
+                div > <
                 div className = "bg-gray-50 rounded-lg p-4 border" >
                 <
                 div className = "text-xs text-gray-500" > Genre < /div> <
                 div className = "text-sm font-semibold text-gray-900" > { selectedProduct.genre || "-" } <
-                /div> <
-                /div> <
+                /div> < /
+                div > <
                 div className = "bg-gray-50 rounded-lg p-4 border" >
                 <
                 div className = "text-xs text-gray-500" > Status < /div> <
-                div className = "text-sm font-semibold text-gray-900 capitalize" > { selectedProduct.productStatus ? .replace("-", " ") } <
-                /div> <
-                /div> <
+                div className = "text-sm font-semibold text-gray-900 capitalize" > { selectedProduct.productStatus?.replace("-", " ") } <
+                /div> < /
+                div > <
                 div className = "bg-gray-50 rounded-lg p-4 border" >
                 <
                 div className = "text-xs text-gray-500" > Visibility < /div> <
                 div className = "text-sm font-semibold text-gray-900" > { selectedProduct.isActive ? "Active" : "Inactive" } { selectedProduct.isFeatured ? " • Featured" : "" } <
-                /div> <
-                /div> <
+                /div> < /
+                div > <
                 /div>
 
                 { /* Funding stats */ } <
@@ -1601,8 +1619,8 @@ const ListInvestmentProducts = ({ token }) => {
                     ).toFixed(1)
                 } %
                 <
-                /span> <
-                /div> <
+                /span> < /
+                div > <
                 div className = "w-full bg-gray-200 rounded-full h-2 mb-2" >
                 <
                 div className = "bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full"
@@ -1616,22 +1634,22 @@ const ListInvestmentProducts = ({ token }) => {
                           )}%`,
                     }
                 }
-                /> <
-                /div> <
+                /> < /
+                div > <
                 div className = "grid grid-cols-2 sm:grid-cols-4 gap-4 mt-3 text-xs" >
                 <
                 div >
                 <
                 div className = "text-gray-500" > Raised < /div> <
                 div className = "font-semibold text-gray-900" > { formatCurrency(selectedProduct.currentFunding || 0) } <
-                /div> <
-                /div> <
+                /div> < /
+                div > <
                 div >
                 <
                 div className = "text-gray-500" > Goal < /div> <
                 div className = "font-semibold text-gray-900" > { formatCurrency(selectedProduct.totalBudget || 0) } <
-                /div> <
-                /div> <
+                /div> < /
+                div > <
                 div >
                 <
                 div className = "text-gray-500" > Remaining < /div> <
@@ -1641,26 +1659,26 @@ const ListInvestmentProducts = ({ token }) => {
                         (selectedProduct.currentFunding || 0)
                     )
                 } <
-                /div> <
-                /div> <
+                /div> < /
+                div > <
                 div >
                 <
                 div className = "text-gray-500" > Investors < /div> <
                 div className = "font-semibold text-gray-900" > { selectedProduct.totalInvestors || 0 } <
-                /div> <
-                /div> <
-                /div> <
-                /div> <
-                /div> <
-                /div>
+                /div> < /
+                div > <
+                /div> < /
+                div > <
+                /div> < /
+                div >
 
                 { /* Description */ } <
                 div className = "bg-white rounded-lg border p-4" >
                 <
                 div className = "text-sm text-gray-500 mb-1" > Description < /div> <
                 p className = "text-sm text-gray-800 leading-6 whitespace-pre-wrap" > { selectedProduct.description || "No description provided." } <
-                /p> <
-                /div>
+                /p> < /
+                div >
 
                 { /* Media Links */ } <
                 div className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" > {
@@ -1673,8 +1691,8 @@ const ListInvestmentProducts = ({ token }) => {
                         div className = "text-xs text-gray-500" > YouTube < /div> <
                         div className = "text-sm font-semibold text-blue-700 truncate" >
                         Open video <
-                        /div> <
-                        /a>
+                        /div> < /
+                        a >
                     )
                 } {
                     selectedProduct.videoFile && ( <
@@ -1686,8 +1704,8 @@ const ListInvestmentProducts = ({ token }) => {
                         div className = "text-xs text-gray-500" > Video File < /div> <
                         div className = "text-sm font-semibold text-blue-700 truncate" >
                         Download / Play <
-                        /div> <
-                        /a>
+                        /div> < /
+                        a >
                     )
                 } {
                     selectedProduct.demoTrack && ( <
@@ -1699,8 +1717,8 @@ const ListInvestmentProducts = ({ token }) => {
                         div className = "text-xs text-gray-500" > Demo Track < /div> <
                         div className = "text-sm font-semibold text-blue-700 truncate" >
                         Listen <
-                        /div> <
-                        /a>
+                        /div> < /
+                        a >
                     )
                 } {
                     selectedProduct.fullTrack && ( <
@@ -1712,8 +1730,8 @@ const ListInvestmentProducts = ({ token }) => {
                         div className = "text-xs text-gray-500" > Full Track < /div> <
                         div className = "text-sm font-semibold text-blue-700 truncate" >
                         Listen <
-                        /div> <
-                        /a>
+                        /div> < /
+                        a >
                     )
                 } <
                 /div>
@@ -1722,7 +1740,8 @@ const ListInvestmentProducts = ({ token }) => {
                 div className = "flex flex-wrap gap-3" >
                 <
                 button onClick = {
-                    () => openFundingModal(selectedProduct) }
+                    () => openFundingModal(selectedProduct)
+                }
                 className = "px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-semibold" >
                 Manage Funding <
                 /button> <
@@ -1733,24 +1752,23 @@ const ListInvestmentProducts = ({ token }) => {
                         selectedProduct.isFeatured
                     )
                 }
-                className = "px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 text-sm font-semibold" >
-                { selectedProduct.isFeatured ? "Unfeature" : "Feature" } <
+                className = "px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 text-sm font-semibold" > { selectedProduct.isFeatured ? "Unfeature" : "Feature" } <
                 /button> <
                 button onClick = {
                     () =>
                     toggleActive(selectedProduct._id, selectedProduct.isActive)
                 }
-                className = "px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 text-sm font-semibold" >
-                { selectedProduct.isActive ? "Deactivate" : "Activate" } <
+                className = "px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 text-sm font-semibold" > { selectedProduct.isActive ? "Deactivate" : "Activate" } <
                 /button> <
                 button onClick = {
-                    () => handleDelete(selectedProduct._id) }
+                    () => handleDelete(selectedProduct._id)
+                }
                 className = "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-semibold" >
                 Delete <
-                /button> <
-                /div> <
-                /div> <
-                /div> <
+                /button> < /
+                div > <
+                /div> < /
+                div > <
                 /div>
             )
         }
@@ -1760,7 +1778,8 @@ const ListInvestmentProducts = ({ token }) => {
                 div className = "flex flex-col items-center mt-8 space-y-4" > { /* Page Info */ } <
                 div className = "text-sm text-gray-600" >
                 Showing {
-                    ((currentPage - 1) * 500) + 1 }
+                    ((currentPage - 1) * 500) + 1
+                }
                 to { Math.min(currentPage * 500, totalProducts || products.length) }
                 of { totalProducts || products.length }
                 products <
@@ -1769,7 +1788,8 @@ const ListInvestmentProducts = ({ token }) => {
                 { /* Pagination Controls */ } <
                 div className = "flex items-center space-x-2" > { /* Previous Button */ } <
                 button onClick = {
-                    () => handlePageChange(currentPage - 1) }
+                    () => handlePageChange(currentPage - 1)
+                }
                 disabled = { currentPage === 1 }
                 className = { `px-4 py-2 rounded-lg font-medium text-sm ${
                 currentPage === 1
@@ -1795,13 +1815,13 @@ const ListInvestmentProducts = ({ token }) => {
                         return ( <
                             button key = { pageNum }
                             onClick = {
-                                () => handlePageChange(pageNum) }
+                                () => handlePageChange(pageNum)
+                            }
                             className = { `px-3 py-2 rounded-lg font-medium text-sm ${
                     currentPage === pageNum
                       ? "bg-blue-600 text-white"
                       : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
-                  }` } >
-                            { pageNum } <
+                  }` } > { pageNum } <
                             /button>
                         );
                     })
@@ -1809,7 +1829,8 @@ const ListInvestmentProducts = ({ token }) => {
 
                 { /* Next Button */ } <
                 button onClick = {
-                    () => handlePageChange(currentPage + 1) }
+                    () => handlePageChange(currentPage + 1)
+                }
                 disabled = { currentPage === totalPages }
                 className = { `px-4 py-2 rounded-lg font-medium text-sm ${
                 currentPage === totalPages
@@ -1817,15 +1838,15 @@ const ListInvestmentProducts = ({ token }) => {
                   : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
               }` } >
                 Next <
-                /button> <
-                /div>
+                /button> < /
+                div >
 
                 { /* Page indicator */ } <
                 div className = "text-xs text-gray-500" >
                 Page { currentPage }
                 of { totalPages } <
-                /div> <
-                /div>
+                /div> < /
+                div >
             )
         }
 
@@ -1836,8 +1857,8 @@ const ListInvestmentProducts = ({ token }) => {
                 div className = "flex items-center space-x-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-lg" >
                 <
                 div className = "animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600" > < /div> <
-                span className = "text-sm font-medium" > Loading page { currentPage }... < /span> <
-                /div> <
+                span className = "text-sm font-medium" > Loading page { currentPage }... < /span> < /
+                div > <
                 /div>
             )
         }
@@ -1849,8 +1870,8 @@ const ListInvestmentProducts = ({ token }) => {
                 div className = "bg-white rounded-lg p-6 shadow-xl" >
                 <
                 div className = "animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" > < /div> <
-                p className = "text-sm text-gray-600 mt-2" > Loading... < /p> <
-                /div> <
+                p className = "text-sm text-gray-600 mt-2" > Loading... < /p> < /
+                div > <
                 /div>
             )
         } <

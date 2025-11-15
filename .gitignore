@@ -1,0 +1,25 @@
+# Environment variables
+
+.env.local
+.env.production
+
+# Large video files
+# *.mp4 - Commented out to allow hero.mp4
+*.mov
+*.avi
+*.mkv
+
+# Upload directories
+backend/uploads/
+
+# Build directories
+*/dist/
+frontend/dist/
+admin/dist/
+
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db

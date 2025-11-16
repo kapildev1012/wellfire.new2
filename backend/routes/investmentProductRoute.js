@@ -68,7 +68,8 @@ const debugMiddleware = (req, res, next) => {
 };
 
 // Public routes with caching (5 minutes for list, 2 minutes for individual)
-investmentProductRouter.get("/list", cacheMiddleware(300), listInvestmentProducts);
+// Note: Admin uses /list without cache to always get fresh data
+investmentProductRouter.get("/list", listInvestmentProducts);
 investmentProductRouter.get("/:id", cacheMiddleware(120), getInvestmentProduct);
 
 // Admin routes with extensive debugging

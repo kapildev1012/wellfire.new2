@@ -70,13 +70,13 @@ const ListInvestmentProducts = ({ token }) => {
 
             if (response.data.success) {
                 console.log('API Response:', response.data);
-                console.log('Products received:', response.data.products ?.length);
+                console.log('Products received:', response.data.products ? response.data.products.length : 0);
                 console.log('Pagination info:', response.data.pagination);
 
                 setProducts(response.data.products || []);
-                setCurrentPage(response.data.pagination ?.currentPage || 1);
-                setTotalPages(response.data.pagination ?.totalPages || 1);
-                setTotalProducts(response.data.pagination ?.totalProducts || response.data.products ?.length || 0);
+                setCurrentPage(response.data.pagination ? response.data.pagination.currentPage : 1);
+                setTotalPages(response.data.pagination ? response.data.pagination.totalPages : 1);
+                setTotalProducts(response.data.pagination ? response.data.pagination.totalProducts : (response.data.products ? response.data.products.length : 0));
 
                 // Update URL without page reload
                 const url = new URL(window.location);
@@ -87,11 +87,11 @@ const ListInvestmentProducts = ({ token }) => {
             console.error("Fetch products error:", error);
             console.error("Error details:", {
                 message: error.message,
-                response: error.response ?.data,
-                status: error.response ?.status,
+                response: error.response ? error.response.data : null,
+                status: error.response ? error.response.status : null,
                 url: `${backendUrl}/api/investment-product/list`
             });
-            toast.error(`Failed to fetch products: ${error.response?.data?.message || error.message}`);
+            toast.error(`Failed to fetch products: ${error.response && error.response.data && error.response.data.message ? error.response.data.message : error.message}`);
         } finally {
             setLoading(false);
             setIsNavigating(false);
@@ -114,7 +114,6 @@ const ListInvestmentProducts = ({ token }) => {
     }, [token]);
 
     // Update product actions
-
     const toggleFeatured = async(productId, isFeatured) => {
         try {
             const response = await axios.put(
@@ -146,7 +145,7 @@ const ListInvestmentProducts = ({ token }) => {
     };
 
     const handleDelete = async(productId) => {
-        if (!confirm("Are you sure you want to delete this product?")) return;
+        if (!window.confirm("Are you sure you want to delete this product?")) return;
 
         try {
             const response = await axios.delete(
@@ -165,6 +164,17 @@ const ListInvestmentProducts = ({ token }) => {
 
     const updateFundingProgress = async(productId, fundingData) => {
         try {
+            // Validate before sending to backend
+            if (fundingData.currentFunding < 0) {
+                toast.error("Funding cannot be negative");
+                return;
+            }
+
+            if (selectedProduct && fundingData.currentFunding > selectedProduct.totalBudget) {
+                toast.error(`Funding cannot exceed total budget of ₹${selectedProduct.totalBudget}`);
+                return;
+            }
+
             const response = await axios.put(
                 `${backendUrl}/api/investment-product/${productId}/funding`,
                 fundingData, { headers: { token } }
@@ -172,7 +182,31 @@ const ListInvestmentProducts = ({ token }) => {
 
             if (response.data.success) {
                 toast.success("Funding updated successfully!");
-                fetchProducts(currentPage);
+
+                // Update local products state immediately so remaining amount updates
+                setProducts((prevProducts) =>
+                    prevProducts.map((product) =>
+                        product._id === productId ?
+                        {
+                            ...product,
+                            currentFunding: fundingData.currentFunding,
+                            totalInvestors: fundingData.totalInvestors || product.totalInvestors,
+                            fundingStatus: fundingData.fundingStatus || product.fundingStatus
+                        } :
+                        product
+                    )
+                );
+
+                // Update selected product so modal preview shows new values instantly
+                if (selectedProduct && selectedProduct._id === productId) {
+                    setSelectedProduct({
+                        ...selectedProduct,
+                        currentFunding: fundingData.currentFunding,
+                        totalInvestors: fundingData.totalInvestors || selectedProduct.totalInvestors,
+                        fundingStatus: fundingData.fundingStatus || selectedProduct.fundingStatus
+                    });
+                }
+
                 fetchAnalytics();
                 setShowFundingModal(false);
             } else {
@@ -180,7 +214,12 @@ const ListInvestmentProducts = ({ token }) => {
             }
         } catch (error) {
             console.error("Update funding error:", error);
-            toast.error("Failed to update funding. Please try again.");
+            toast.error(
+                (error.response && error.response.data && error.response.data.message) ||
+                (error.response && error.response.data && error.response.data.error) ||
+                error.message ||
+                "Failed to update funding. Please try again."
+            );
         }
     };
 
@@ -193,7 +232,23 @@ const ListInvestmentProducts = ({ token }) => {
 
             if (response.data.success) {
                 toast.success("Total Budget updated successfully!");
-                fetchProducts(currentPage);
+
+                // Update local products state immediately so Goal displays new value
+                setProducts((prevProducts) =>
+                    prevProducts.map((product) =>
+                        product._id === productId ? {...product, totalBudget: budgetData.totalBudget } :
+                        product
+                    )
+                );
+
+                // Update selected product so modal preview shows new Goal instantly
+                if (selectedProduct && selectedProduct._id === productId) {
+                    setSelectedProduct({
+                        ...selectedProduct,
+                        totalBudget: budgetData.totalBudget
+                    });
+                }
+
                 fetchAnalytics();
                 setShowBudgetModal(false);
             } else {
@@ -201,7 +256,11 @@ const ListInvestmentProducts = ({ token }) => {
             }
         } catch (error) {
             console.error("Update budget error:", error);
-            toast.error("Failed to update budget. Please try again.");
+            toast.error(
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                "Failed to update budget. Please try again."
+            );
         }
     };
 
@@ -211,7 +270,6 @@ const ListInvestmentProducts = ({ token }) => {
             fetchProducts(page, false);
         }
     }, [totalPages, currentPage, fetchProducts]);
-
 
     // Helper functions
     const formatCurrency = (amount) => {
@@ -250,7 +308,7 @@ const ListInvestmentProducts = ({ token }) => {
     const openDetailsModal = (product) => {
         setSelectedProduct(product);
         setShowDetailsModal(true);
-    }
+    };
 
     const openBudgetModal = (product) => {
         setSelectedProduct(product);
@@ -268,13 +326,31 @@ const ListInvestmentProducts = ({ token }) => {
 
     const updateProductStatus = async(productId, newStatus) => {
         try {
+            console.log("Updating product status:", { productId, newStatus });
+
             const response = await axios.put(
                 `${backendUrl}/api/investment-product/${productId}/status`, { productStatus: newStatus }, { headers: { token } }
             );
 
             if (response.data.success) {
                 toast.success(`Product status updated to ${newStatus}!`);
-                fetchProducts(currentPage);
+
+                // Update local products state immediately
+                setProducts((prevProducts) =>
+                    prevProducts.map((product) =>
+                        product._id === productId ? {...product, productStatus: newStatus } :
+                        product
+                    )
+                );
+
+                // Update selected product if it's the one being edited
+                if (selectedProduct && selectedProduct._id === productId) {
+                    setSelectedProduct({
+                        ...selectedProduct,
+                        productStatus: newStatus
+                    });
+                }
+
                 fetchAnalytics();
                 setShowStatusModal(false);
             } else {
@@ -282,31 +358,57 @@ const ListInvestmentProducts = ({ token }) => {
             }
         } catch (error) {
             console.error("Update product status error:", error);
-            toast.error("Failed to update product status. Please try again.");
+            console.error("Error response:", error.response && error.response.data);
+            toast.error(
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                "Failed to update product status. Please try again."
+            );
         }
     };
 
     const removeProduct = async(productId) => {
         if (window.confirm("Are you sure you want to permanently delete this product? This action cannot be undone.")) {
             try {
+                console.log("Deleting product:", productId);
+
                 const response = await axios.delete(
                     `${backendUrl}/api/investment-product/${productId}`, { headers: { token } }
                 );
 
+                console.log("Delete response:", response.data);
+
                 if (response.data.success) {
                     toast.success("Product deleted successfully!");
-                    fetchProducts(currentPage);
-                    fetchAnalytics();
+
+                    // Immediately remove from local state so it disappears from the admin list
+                    setProducts((prevProducts) =>
+                        prevProducts.filter((product) => product._id !== productId)
+                    );
+
+                    // Refresh the full list to ensure deleted product doesn't reappear
+                    setTimeout(() => {
+                        fetchProducts(currentPage);
+                        fetchAnalytics();
+                    }, 500);
                 } else {
+                    console.error("Delete failed - success is false:", response.data);
                     toast.error(response.data.message || "Failed to delete product");
                 }
             } catch (error) {
                 console.error("Delete product error:", error);
-                toast.error("Failed to delete product. Please try again.");
+                console.error("Error response:", error.response && error.response.data);
+                console.error("Error status:", error.response && error.response.status);
+
+                // Show the actual backend error message
+                toast.error(
+                    (error.response && error.response.data && error.response.data.message) ||
+                    error.message ||
+                    "Failed to delete product. Please try again."
+                );
             }
         }
     };
-
 
     // Initialize from URL parameters
     useEffect(() => {
@@ -319,7 +421,6 @@ const ListInvestmentProducts = ({ token }) => {
 
     // Auto-refresh products when filters change
     useEffect(() => {
-        // Always refresh when filters change, including when they're cleared
         fetchProducts(1);
     }, [searchTerm, filters, fetchProducts]);
 
@@ -349,8 +450,9 @@ const ListInvestmentProducts = ({ token }) => {
         return ( <
             div className = "flex justify-center items-center h-screen" >
             <
-            div className = "animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600" > < /div> < /
-            div >
+            div className = "animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600" / >
+            <
+            /div>
         );
     }
 
@@ -383,6 +485,11 @@ const ListInvestmentProducts = ({ token }) => {
         div className = "flex flex-col sm:flex-row gap-4" >
         <
         button onClick = {
+            () => setViewMode(viewMode === "grid" ? "table" : "grid")
+        }
+        className = "px-6 py-3 bg-gray-800 text-white rounded hover:bg-gray-700 transition-all duration-200 font-bold text-sm" > { viewMode === "grid" ? "TABLE VIEW" : "GRID VIEW" } <
+        /button> <
+        button onClick = {
             () => window.location.href = '/add'
         }
         className = "px-8 py-4 bg-white text-black rounded-none hover:bg-gray-200 transition-all duration-200 font-bold text-lg border-2 border-white shadow-lg hover:shadow-xl flex items-center gap-3 group" >
@@ -395,13 +502,11 @@ const ListInvestmentProducts = ({ token }) => {
         path strokeLinecap = "round"
         strokeLinejoin = "round"
         strokeWidth = "2"
-        d = "M12 4v16m8-8H4" >
+        d = "M12 4v16m8-8H4" /
+        >
         <
-        /path> < /
-        svg > <
-        span className = "tracking-wider" >
-        ADD NEW PRODUCT <
-        /span> < /
+        /svg> <
+        span className = "tracking-wider" > ADD NEW PRODUCT < /span> < /
         button > <
         /div> < /
         div > <
@@ -409,350 +514,7 @@ const ListInvestmentProducts = ({ token }) => {
         div >
 
         <
-        div className = "max-w-7xl mx-auto px-6 lg:px-8 py-10" > { /* Analytics Dashboard */ } <
-        div className = "bg-white rounded-lg shadow-lg border border-gray-200 mb-6" > { /* Dashboard Header */ } <
-        div className = "p-4 pb-3 border-b border-gray-200" >
-        <
-        div className = "flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3" >
-        <
-        div >
-        <
-        h2 className = "text-lg font-bold text-black mb-1 tracking-wider" >
-        ANALYTICS DASHBOARD <
-        /h2> <
-        p className = "text-xs text-gray-600 font-medium max-w-2xl" >
-        Real - time overview of your investment portfolio <
-        /p> < /
-        div > <
-        div className = "flex gap-2" >
-        <
-        button onClick = { fetchAnalytics }
-        className = "px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-all duration-200 font-bold text-xs" >
-        REFRESH <
-        /button> <
-        button onClick = {
-            () => setViewMode(viewMode === "grid" ? "table" : "grid")
-        }
-        className = "px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-all duration-200 font-bold text-xs" > { viewMode === "grid" ? "TABLE" : "GRID" } <
-        /button> < /
-        div > <
-        /div> < /
-        div >
-
-        { /* Main Analytics Cards */ } <
-        div className = "p-4" >
-        <
-        div className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4" >
-        <
-        div className = "bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 border-2 border-white p-3 hover:shadow-lg transition-all duration-300 overflow-hidden min-w-0" >
-        <
-        div className = "flex items-center justify-between mb-2" >
-        <
-        div className = "p-2 bg-white/20 backdrop-blur-sm" >
-        <
-        svg className = "w-4 h-4 text-white"
-        fill = "none"
-        stroke = "currentColor"
-        viewBox = "0 0 24 24" >
-        <
-        path strokeLinecap = "round"
-        strokeLinejoin = "round"
-        strokeWidth = "2"
-        d = "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" >
-        <
-        /path> < /
-        svg > <
-        /div> < /
-        div > <
-        div >
-        <
-        p className = "text-xs font-bold text-white mb-1 uppercase tracking-wide" >
-        TOTAL PRODUCTS <
-        /p> <
-        p className = "text-xl font-bold text-white mb-1 truncate" > { analytics.totalProducts } <
-        /p> <
-        p className = "text-xs text-blue-100 font-medium" >
-        Active items <
-        /p> < /
-        div > <
-        /div>
-
-        <
-        div className = "bg-gradient-to-br from-green-500 via-green-600 to-green-700 border-2 border-white p-3 hover:shadow-lg transition-all duration-300 overflow-hidden min-w-0" >
-        <
-        div className = "flex items-center justify-between mb-2" >
-        <
-        div className = "p-2 bg-white/20 backdrop-blur-sm" >
-        <
-        svg className = "w-4 h-4 text-white"
-        fill = "none"
-        stroke = "currentColor"
-        viewBox = "0 0 24 24" >
-        <
-        path strokeLinecap = "round"
-        strokeLinejoin = "round"
-        strokeWidth = "2"
-        d = "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" >
-        <
-        /path> < /
-        svg > <
-        /div> < /
-        div > <
-        div >
-        <
-        p className = "text-xs font-bold text-white mb-1 uppercase tracking-wide" >
-        TOTAL FUNDING <
-        /p> <
-        p className = "text-xl font-bold text-white mb-1 truncate" > { formatCurrency(analytics.totalFunding || 0) } <
-        /p> <
-        p className = "text-xs text-green-100 font-medium" >
-        Investment value <
-        /p> < /
-        div > <
-        /div>
-
-        <
-        div className = "bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700 border-2 border-white p-3 hover:shadow-lg transition-all duration-300 overflow-hidden min-w-0" >
-        <
-        div className = "flex items-center justify-between mb-2" >
-        <
-        div className = "p-2 bg-white/20 backdrop-blur-sm" >
-        <
-        svg className = "w-4 h-4 text-white"
-        fill = "none"
-        stroke = "currentColor"
-        viewBox = "0 0 24 24" >
-        <
-        path strokeLinecap = "round"
-        strokeLinejoin = "round"
-        strokeWidth = "2"
-        d = "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" >
-        <
-        /path> < /
-        svg > <
-        /div> < /
-        div > <
-        div >
-        <
-        p className = "text-xs font-bold text-white mb-1 uppercase tracking-wide" >
-        ACTIVE FUNDING <
-        /p> <
-        p className = "text-xl font-bold text-white mb-1 truncate" > { analytics.activeFunding } <
-        /p> <
-        p className = "text-xs text-orange-100 font-medium" >
-        Seeking funds <
-        /p> < /
-        div > <
-        /div>
-
-        <
-        div className = "bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 border-2 border-white p-3 hover:shadow-lg transition-all duration-300 overflow-hidden min-w-0" >
-        <
-        div className = "flex items-center justify-between mb-2" >
-        <
-        div className = "p-2 bg-white/20 backdrop-blur-sm" >
-        <
-        svg className = "w-4 h-4 text-white"
-        fill = "none"
-        stroke = "currentColor"
-        viewBox = "0 0 24 24" >
-        <
-        path strokeLinecap = "round"
-        strokeLinejoin = "round"
-        strokeWidth = "2"
-        d = "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" >
-        <
-        /path> < /
-        svg > <
-        /div> < /
-        div > <
-        div >
-        <
-        p className = "text-xs font-bold text-white mb-1 uppercase tracking-wide" >
-        COMPLETED <
-        /p> <
-        p className = "text-xl font-bold text-white mb-1 truncate" > { analytics.completedProjects } <
-        /p> <
-        p className = "text-xs text-purple-100 font-medium" >
-        Successfully funded <
-        /p> < /
-        div > <
-        /div>
-
-        <
-        /div>
-
-        { /* Secondary Analytics Section */ } <
-        div className = "grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6" > { /* Category Distribution */ } <
-        div className = "bg-gray-50 border border-gray-200 rounded-lg p-4" >
-        <
-        h3 className = "text-sm font-bold text-black mb-3 uppercase tracking-wider" >
-        CATEGORY DISTRIBUTION <
-        /h3> <
-        div className = "space-y-3" > {
-            Object.entries(
-                products.reduce((acc, product) => {
-                    acc[product.category] = (acc[product.category] || 0) + 1;
-                    return acc;
-                }, {})
-            ).map(([category, count]) => ( <
-                div key = { category }
-                className = "flex items-center justify-between py-1" >
-                <
-                span className = "text-xs font-bold text-black uppercase" > { category } <
-                /span> <
-                div className = "flex items-center gap-2 flex-1 ml-3" >
-                <
-                div className = "flex-1 bg-gray-300 h-1.5 max-w-16" >
-                <
-                div className = "bg-black h-1.5 transition-all duration-500"
-                style = {
-                    {
-                        width: `${(count / products.length) * 100}%`,
-                    }
-                } >
-                <
-                /div> < /
-                div > <
-                span className = "text-xs font-bold text-black min-w-4" > { count } <
-                /span> < /
-                div > <
-                /div>
-            ))
-        } <
-        /div> < /
-        div >
-
-        { /* Funding Status Overview */ } <
-        div className = "bg-gray-50 border border-gray-200 rounded-lg p-4" >
-        <
-        h3 className = "text-sm font-bold text-black mb-3 uppercase tracking-wider" >
-        FUNDING STATUS OVERVIEW <
-        /h3> <
-        div className = "space-y-3" > {
-            Object.entries(
-                products.reduce((acc, product) => {
-                    acc[product.productStatus] =
-                        (acc[product.productStatus] || 0) + 1;
-                    return acc;
-                }, {})
-            ).map(([status, count]) => ( <
-                div key = { status }
-                className = "flex items-center justify-between py-1" >
-                <
-                span className = "text-xs font-bold text-black uppercase" > { status.replace("-", " ") } <
-                /span> <
-                div className = "flex items-center gap-2 flex-1 ml-3" >
-                <
-                div className = "flex-1 bg-gray-300 h-1.5 max-w-16" >
-                <
-                div className = "bg-black h-1.5 transition-all duration-500"
-                style = {
-                    {
-                        width: `${(count / products.length) * 100}%`,
-                    }
-                } >
-                <
-                /div> < /
-                div > <
-                span className = "text-xs font-bold text-black min-w-4" > { count } <
-                /span> < /
-                div > <
-                /div>
-            ))
-        } <
-        /div> < /
-        div > <
-        /div>
-
-        { /* Performance Metrics */ } <
-        div className = "grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" >
-        <
-        div className = "bg-white border-2 border-black p-4 hover:shadow-md transition-all duration-300" >
-        <
-        h4 className = "text-xs font-bold text-black mb-1 uppercase tracking-wide" >
-        SUCCESS RATE <
-        /h4> <
-        p className = "text-lg font-bold text-black mb-1" > {
-            analytics.totalProducts > 0 ?
-            (
-                (analytics.completedProjects /
-                    analytics.totalProducts) *
-                100
-            ).toFixed(1) : 0
-        } %
-        <
-        /p> <
-        p className = "text-xs text-gray-600 font-medium" >
-        Projects successfully funded <
-        /p> < /
-        div >
-
-        <
-        div className = "bg-white border-2 border-black p-4 hover:shadow-md transition-all duration-300" >
-        <
-        h4 className = "text-xs font-bold text-black mb-1 uppercase tracking-wide" >
-        FUNDING EFFICIENCY <
-        /h4> <
-        div className = "space-y-1" >
-        <
-        div >
-        <
-        p className = "text-sm font-bold text-purple-600" > {
-            products.length > 0 ?
-            (
-                (products.reduce((total, product) => total + (product.currentFunding || 0), 0) /
-                    products.reduce((total, product) => total + (product.totalBudget || 0), 0)) *
-                100
-            ).toFixed(1) : 0
-        } %
-        <
-        /p> <
-        p className = "text-[10px] text-gray-500" > Total Fund Efficiency < /p> < /
-        div > <
-        div >
-        <
-        p className = "text-sm font-bold text-orange-600" > {
-            products.length > 0 ?
-            formatCurrency(
-                products.reduce((total, product) => total + (product.totalBudget || 0), 0) / products.length
-            ) : formatCurrency(0)
-        } <
-        /p> <
-        p className = "text-[10px] text-gray-500" > Average Portfolio Value < /p> < /
-        div > <
-        /div> < /
-        div >
-
-        <
-        div className = "bg-white border-2 border-black p-4 hover:shadow-md transition-all duration-300" >
-        <
-        h4 className = "text-xs font-bold text-black mb-1 uppercase tracking-wide" >
-        PORTFOLIO VALUE <
-        /h4> <
-        div className = "space-y-1" >
-        <
-        div >
-        <
-        p className = "text-sm font-bold text-blue-600" > { formatCurrency(products.reduce((total, product) => total + (product.totalBudget || 0), 0)) } <
-        /p> <
-        p className = "text-[10px] text-gray-500" > Total Portfolio Value < /p> < /
-        div > <
-        div >
-        <
-        p className = "text-sm font-bold text-green-600" > { formatCurrency(products.reduce((total, product) => total + (product.currentFunding || 0), 0)) } <
-        /p> <
-        p className = "text-[10px] text-gray-500" > Total Investment Received < /p> < /
-        div > <
-        /div> < /
-        div > <
-        /div>
-
-        { /* Quick Actions removed as requested */ } <
-        /div> < /
-        div >
-
-        { /* Search and Filters */ } <
+        div className = "max-w-7xl mx-auto px-6 lg:px-8 py-10" > { /* Search and Filters */ } <
         div className = "bg-white rounded-xl shadow-md border border-gray-100 p-6 mb-8" >
         <
         div className = "flex flex-col lg:flex-row gap-4" >
@@ -770,7 +532,7 @@ const ListInvestmentProducts = ({ token }) => {
         className = "w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" /
         >
         <
-        span className = "absolute left-3 top-3 text-gray-400 text-xl" > < /span> < /
+        span className = "absolute left-3 top-3 text-gray-400 text-xl" > 🔍 < /span> < /
         div > <
         /div>
 
@@ -782,7 +544,7 @@ const ListInvestmentProducts = ({ token }) => {
             (e) => {
                 const newFilters = {...filters, category: e.target.value };
                 setFilters(newFilters);
-                setCurrentPage(1); // Reset to first page when filter changes
+                setCurrentPage(1);
             }
         }
         className = "px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500" >
@@ -805,7 +567,7 @@ const ListInvestmentProducts = ({ token }) => {
             (e) => {
                 const newFilters = {...filters, status: e.target.value };
                 setFilters(newFilters);
-                setCurrentPage(1); // Reset to first page when filter changes
+                setCurrentPage(1);
             }
         }
         className = "px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500" >
@@ -815,10 +577,7 @@ const ListInvestmentProducts = ({ token }) => {
         option value = "in-production" > In Production < /option> <
         option value = "completed" > Completed < /option> <
         option value = "cancelled" > Cancelled < /option> < /
-        select >
-
-
-        <
+        select > <
         /div> < /
         div > <
         /div>
@@ -826,9 +585,13 @@ const ListInvestmentProducts = ({ token }) => {
         { /* Products Display */ } <
         div className = "mb-4" >
         <
-        p className = "text-sm text-gray-600" > Displaying { products.length }
-        products < /p> < /
-        div > {
+        p className = "text-sm text-gray-600" >
+        Displaying { products.length }
+        products { products.length === 0 && !loading && "(No products found - check console for API response)" } <
+        /p> < /
+        div >
+
+        {
             viewMode === "grid" ? ( <
                 div className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4" > {
                     products.map((product) => ( <
@@ -836,14 +599,10 @@ const ListInvestmentProducts = ({ token }) => {
                         className = "bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl hover:scale-105 transition-all duration-300 overflow-hidden group" > { /* Product Image */ } <
                         div className = "relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden" > {
                             product.coverImage ? ( <
-                                >
-                                <
                                 img src = { product.coverImage }
                                 alt = { product.productTitle }
                                 className = "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" /
                                 >
-                                <
-                                />
                             ) : ( <
                                 div className = "w-full h-full flex items-center justify-center text-gray-400 text-xs bg-gray-100" >
                                 No Image <
@@ -855,8 +614,8 @@ const ListInvestmentProducts = ({ token }) => {
                         div className = "absolute top-3 left-3" >
                         <
                         span className = { `px-2 py-1 rounded-full text-[10px] font-semibold text-white shadow-lg ${getStatusColor(
-                        product.productStatus
-                      )}` } > { product.productStatus.toUpperCase() } <
+                                                product.productStatus
+                                            )}` } > { product.productStatus.toUpperCase() } <
                         /span> < /
                         div >
 
@@ -869,9 +628,7 @@ const ListInvestmentProducts = ({ token }) => {
                                 /span> < /
                                 div >
                             )
-                        }
-
-                        <
+                        } <
                         /div>
 
                         { /* Product Content */ } <
@@ -908,17 +665,18 @@ const ListInvestmentProducts = ({ token }) => {
                         div className = "bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500 hover:from-blue-600 hover:to-purple-600 hover:shadow-lg"
                         style = {
                             {
-                                width: `${Math.max(1, calculateFundingPercentage(
-                            product.currentFunding || 0,
-                            product.totalBudget
-                          ))}%`,
+                                width: `${Math.max(
+                                                        1,
+                                                        calculateFundingPercentage(
+                                                            product.currentFunding || 0,
+                                                            product.totalBudget
+                                                        )
+                                                    )}%`,
                             }
-                        } >
-                        <
-                        /div> < /
+                        }
+                        /> < /
                         div > <
                         /div>
-
 
                         { /* Product Status */ } <
                         div className = "flex items-center justify-between mb-2" >
@@ -928,15 +686,19 @@ const ListInvestmentProducts = ({ token }) => {
                             () => openStatusModal(product)
                         }
                         className = { `px-2 py-0.5 rounded-full text-[9px] font-semibold transition-all duration-200 hover:scale-105 ${
-                        product.productStatus === 'completed'
-                          ? "bg-green-100 text-green-800 hover:bg-green-200"
-                          : product.productStatus === 'funding'
-                          ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
-                          : product.productStatus === 'in-production'
-                          ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }` } > {
-                            product.productStatus === 'completed' ? 'Completed' : product.productStatus === 'funding' ? 'Funding' : product.productStatus === 'in-production' ? 'In Production' : product.productStatus === 'cancelled' ? 'Cancelled' : product.productStatus || 'Unknown'
+                                                product.productStatus === 'completed'
+                                                    ? "bg-green-100 text-green-800 hover:bg-green-200"
+                                                    : product.productStatus === 'funding'
+                                                    ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
+                                                    : product.productStatus === 'in-production'
+                                                    ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                            }` } > {
+                            product.productStatus === 'completed' ?
+                            'Completed' : product.productStatus === 'funding' ?
+                                'Funding' : product.productStatus === 'in-production' ?
+                                'In Production' : product.productStatus === 'cancelled' ?
+                                'Cancelled' : product.productStatus || 'Unknown'
                         } <
                         /button> < /
                         div >
@@ -971,17 +733,13 @@ const ListInvestmentProducts = ({ token }) => {
                         className = "w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-1 px-1.5 rounded text-[9px] font-semibold hover:from-purple-700 hover:to-purple-800 transition-all duration-200 shadow-sm hover:shadow-md" >
                         Edit Total Budget(₹) <
                         /button> < /
-                        div >
-
-                        <
+                        div > <
                         /div> < /
                         div >
                     ))
                 } <
                 /div>
-            ) : (
-                // Table View
-                <
+            ) : ( <
                 div className = "bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden" >
                 <
                 div className = "overflow-x-auto" >
@@ -1041,8 +799,8 @@ const ListInvestmentProducts = ({ token }) => {
                         td className = "py-3 px-4" >
                         <
                         span className = { `px-2 py-0.5 rounded-full text-xs font-semibold text-white ${getStatusColor(
-                            product.productStatus
-                          )}` } > { product.productStatus } <
+                                                        product.productStatus
+                                                    )}` } > { product.productStatus } <
                         /span> < /
                         td > <
                         td className = "py-3 px-4" >
@@ -1060,13 +818,12 @@ const ListInvestmentProducts = ({ token }) => {
                         style = {
                             {
                                 width: `${calculateFundingPercentage(
-                                  product.currentFunding || 0,
-                                  product.totalBudget
-                                )}%`,
+                                                                    product.currentFunding || 0,
+                                                                    product.totalBudget
+                                                                )}%`,
                             }
-                        } >
-                        <
-                        /div> < /
+                        }
+                        /> < /
                         div > <
                         /div> < /
                         td > <
@@ -1107,7 +864,6 @@ const ListInvestmentProducts = ({ token }) => {
             )
         }
 
-
         { /* Empty State */ } {
             products.length === 0 && !loading && ( <
                 div className = "text-center py-12" >
@@ -1127,11 +883,9 @@ const ListInvestmentProducts = ({ token }) => {
                 /button> < /
                 div >
             )
-        } <
-        /div>
+        }
 
-
-        { /* Modals - Funding and Details remain unchanged */ } {
+        { /* Modals - Funding Modal */ } {
             showFundingModal && selectedProduct && ( <
                 div className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" >
                 <
@@ -1153,8 +907,7 @@ const ListInvestmentProducts = ({ token }) => {
                 <
                 div className = "mb-6" >
                 <
-                h4 className = "font-semibold text-lg" > { selectedProduct.productTitle } <
-                /h4> <
+                h4 className = "font-semibold text-lg" > { selectedProduct.productTitle } < /h4> <
                 p className = "text-gray-600" > by { selectedProduct.artistName } < /p> < /
                 div >
 
@@ -1169,11 +922,22 @@ const ListInvestmentProducts = ({ token }) => {
                 input type = "number"
                 value = { fundingData.currentFunding === 0 ? '' : fundingData.currentFunding }
                 onChange = {
-                    (e) =>
-                    setFundingData({
-                        ...fundingData,
-                        currentFunding: parseFloat(e.target.value) || 0,
-                    })
+                    (e) => {
+                        const value = parseFloat(e.target.value) || 0;
+                        // Prevent funding from exceeding total budget
+                        if (value > selectedProduct.totalBudget) {
+                            toast.warning(`Funding cannot exceed total budget of ₹${selectedProduct.totalBudget}`);
+                            setFundingData({
+                                ...fundingData,
+                                currentFunding: selectedProduct.totalBudget,
+                            });
+                        } else {
+                            setFundingData({
+                                ...fundingData,
+                                currentFunding: value,
+                            });
+                        }
+                    }
                 }
                 onFocus = {
                     (e) => {
@@ -1188,55 +952,6 @@ const ListInvestmentProducts = ({ token }) => {
                 max = { selectedProduct.totalBudget }
                 /> < /
                 div >
-
-                <
-                div >
-                <
-                label className = "block text-sm font-semibold text-gray-700 mb-2" >
-                Total Investors <
-                /label> <
-                input type = "number"
-                value = { fundingData.totalInvestors === 0 ? '' : fundingData.totalInvestors }
-                onChange = {
-                    (e) =>
-                    setFundingData({
-                        ...fundingData,
-                        totalInvestors: parseInt(e.target.value) || 0,
-                    })
-                }
-                onFocus = {
-                    (e) => {
-                        if (e.target.value === '0') {
-                            e.target.select();
-                        }
-                    }
-                }
-                placeholder = "Enter number of investors"
-                className = "w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
-                min = "0" /
-                >
-                <
-                /div>
-
-                <
-                div >
-                <
-                label className = "block text-sm font-semibold text-gray-700 mb-2" >
-                Funding Deadline <
-                /label> <
-                input type = "date"
-                value = { fundingData.fundingDeadline }
-                onChange = {
-                    (e) =>
-                    setFundingData({
-                        ...fundingData,
-                        fundingDeadline: e.target.value,
-                    })
-                }
-                className = "w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500" /
-                >
-                <
-                /div>
 
                 <
                 div >
@@ -1285,22 +1000,17 @@ const ListInvestmentProducts = ({ token }) => {
                 style = {
                     {
                         width: `${calculateFundingPercentage(
-                        fundingData.currentFunding,
-                        selectedProduct.totalBudget
-                      )}%`,
+                                                    fundingData.currentFunding,
+                                                    selectedProduct.totalBudget
+                                                )}%`,
                     }
-                } >
-                <
-                /div> < /
+                }
+                /> < /
                 div > <
                 div className = "flex justify-between text-xs text-gray-600" >
                 <
-                span >
-                Raised: { formatCurrency(fundingData.currentFunding) } <
-                /span> <
-                span >
-                Goal: { formatCurrency(selectedProduct.totalBudget) } <
-                /span> < /
+                span > Raised: { formatCurrency(fundingData.currentFunding) } < /span> <
+                span > Goal: { formatCurrency(selectedProduct.totalBudget) } < /span> < /
                 div > <
                 /div> < /
                 div >
@@ -1351,8 +1061,7 @@ const ListInvestmentProducts = ({ token }) => {
                 <
                 div className = "mb-6" >
                 <
-                h4 className = "font-semibold text-lg" > { selectedProduct.productTitle } <
-                /h4> <
+                h4 className = "font-semibold text-lg" > { selectedProduct.productTitle } < /h4> <
                 p className = "text-gray-600" > by { selectedProduct.artistName } < /p> < /
                 div >
 
@@ -1428,12 +1137,11 @@ const ListInvestmentProducts = ({ token }) => {
                 style = {
                     {
                         width: `${budgetData.totalBudget > 0 
-                          ? Math.min((selectedProduct.currentFunding || 0) / budgetData.totalBudget * 100, 100)
-                          : 0}%`,
+                                                        ? Math.min((selectedProduct.currentFunding || 0) / budgetData.totalBudget * 100, 100)
+                                                        : 0}%`,
                     }
-                } >
-                <
-                /div> < /
+                }
+                /> < /
                 div > <
                 /div> < /
                 div > <
@@ -1490,7 +1198,7 @@ const ListInvestmentProducts = ({ token }) => {
                 Product: { selectedProduct.productTitle } <
                 /label> <
                 label className = "block text-sm font-medium text-gray-700 mb-2" >
-                Current Status: < span className = "capitalize" > { selectedProduct.productStatus ? .replace("-", " ") } < /span> < /
+                Current Status: < span className = "capitalize" > { selectedProduct.productStatus ? selectedProduct.productStatus.replace("-", " ") : "N/A" } < /span> < /
                 label > <
                 /div>
 
@@ -1537,7 +1245,7 @@ const ListInvestmentProducts = ({ token }) => {
             )
         }
 
-        { /* Product Details Modal - keeping original structure */ } {
+        { /* Product Details Modal */ } {
             showDetailsModal && selectedProduct && ( <
                 div className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" >
                 <
@@ -1562,7 +1270,9 @@ const ListInvestmentProducts = ({ token }) => {
                 <
                 /button> < /
                 div > <
-                /div> <
+                /div>
+
+                <
                 div className = "p-6 space-y-6" > { /* Top summary with image and key facts */ } <
                 div className = "grid grid-cols-1 md:grid-cols-3 gap-6" >
                 <
@@ -1593,7 +1303,7 @@ const ListInvestmentProducts = ({ token }) => {
                 div className = "bg-gray-50 rounded-lg p-4 border" >
                 <
                 div className = "text-xs text-gray-500" > Status < /div> <
-                div className = "text-sm font-semibold text-gray-900 capitalize" > { selectedProduct.productStatus ? .replace("-", " ") } <
+                div className = "text-sm font-semibold text-gray-900 capitalize" > { selectedProduct.productStatus ? selectedProduct.productStatus.replace("-", " ") : "N/A" } <
                 /div> < /
                 div > <
                 div className = "bg-gray-50 rounded-lg p-4 border" >
@@ -1613,8 +1323,7 @@ const ListInvestmentProducts = ({ token }) => {
                 span className = "font-semibold text-blue-600" > {
                     Math.min(
                         ((selectedProduct.currentFunding || 0) /
-                            (selectedProduct.totalBudget || 1)) *
-                        100,
+                            (selectedProduct.totalBudget || 1)) * 100,
                         100
                     ).toFixed(1)
                 } %
@@ -1627,11 +1336,10 @@ const ListInvestmentProducts = ({ token }) => {
                 style = {
                     {
                         width: `${Math.min(
-                            ((selectedProduct.currentFunding || 0) /
-                              (selectedProduct.totalBudget || 1)) *
-                              100,
-                            100
-                          )}%`,
+                                                            ((selectedProduct.currentFunding || 0) /
+                                                                (selectedProduct.totalBudget || 1)) * 100,
+                                                            100
+                                                        )}%`,
                     }
                 }
                 /> < /
@@ -1792,10 +1500,10 @@ const ListInvestmentProducts = ({ token }) => {
                 }
                 disabled = { currentPage === 1 }
                 className = { `px-4 py-2 rounded-lg font-medium text-sm ${
-                currentPage === 1
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
-              }` } >
+                                    currentPage === 1
+                                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                        : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
+                                }` } >
                 Previous <
                 /button>
 
@@ -1818,10 +1526,10 @@ const ListInvestmentProducts = ({ token }) => {
                                 () => handlePageChange(pageNum)
                             }
                             className = { `px-3 py-2 rounded-lg font-medium text-sm ${
-                    currentPage === pageNum
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
-                  }` } > { pageNum } <
+                                            currentPage === pageNum
+                                                ? "bg-blue-600 text-white"
+                                                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
+                                        }` } > { pageNum } <
                             /button>
                         );
                     })
@@ -1833,10 +1541,10 @@ const ListInvestmentProducts = ({ token }) => {
                 }
                 disabled = { currentPage === totalPages }
                 className = { `px-4 py-2 rounded-lg font-medium text-sm ${
-                currentPage === totalPages
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
-              }` } >
+                                    currentPage === totalPages
+                                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                        : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
+                                }` } >
                 Next <
                 /button> < /
                 div >
@@ -1875,12 +1583,13 @@ const ListInvestmentProducts = ({ token }) => {
                 /div>
             )
         } <
-        /div>
+        /div> < /
+        div >
     );
 };
 
 ListInvestmentProducts.propTypes = {
-    token: PropTypes.string.isRequired,
+    token: PropTypes.string.isRequired
 };
 
 export default ListInvestmentProducts;

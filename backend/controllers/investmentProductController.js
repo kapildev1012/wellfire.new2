@@ -2,6 +2,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import InvestmentProduct from "../models/investmentProductModel.js";
 import Investor from "../models/investorModel.js";
+import { clearCache } from "../middleware/cache.js";
 
 // Add new investment product with extensive debugging
 const addInvestmentProduct = async(req, res) => {
@@ -314,6 +315,9 @@ const addInvestmentProduct = async(req, res) => {
 
         console.log("✅ Product saved successfully with ID:", savedProduct._id);
 
+        // Clear cached investment product lists so new product appears immediately
+        clearCache("/api/investment-product/list");
+
         return res.status(201).json({
             success: true,
             message: "Investment product added successfully",
@@ -391,7 +395,7 @@ const listInvestmentProducts = async(req, res) => {
             .sort(sort)
             .skip(skip)
             .limit(Number(limit));
-        
+
         console.log("📦 Found products:", products.length);
 
         const productsWithFunding = await Promise.all(
@@ -415,6 +419,13 @@ const listInvestmentProducts = async(req, res) => {
         );
 
         const total = await InvestmentProduct.countDocuments(filter);
+
+        // Prevent browser caching so latest data is always fetched
+        res.set({
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
 
         res.json({
             success: true,
@@ -507,6 +518,15 @@ const updateInvestmentProduct = async(req, res) => {
             });
         }
 
+        // Clear cached lists so updated product data is visible immediately
+        clearCache("/api/investment-product/list");
+
+        res.set({
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
+
         res.json({
             success: true,
             message: "Investment product updated successfully",
@@ -549,6 +569,9 @@ const removeInvestmentProduct = async(req, res) => {
         }
 
         console.log("✅ Product permanently deleted from database");
+
+        // Clear cached lists so deleted product disappears from all lists
+        clearCache("/api/investment-product/list");
 
         res.json({
             success: true,
@@ -689,6 +712,9 @@ const updateFundingProgress = async(req, res) => {
         }
 
         // Update the product
+        console.log("🔄 Attempting to update product with ID:", id);
+        console.log("📝 Update data:", { currentFunding, totalInvestors, fundingDeadline, fundingStatus });
+
         const updatedProduct = await InvestmentProduct.findByIdAndUpdate(
             id, {
                 currentFunding,
@@ -696,10 +722,35 @@ const updateFundingProgress = async(req, res) => {
                 fundingDeadline,
                 fundingStatus,
                 updatedAt: Date.now()
-            }, { new: true }
+            }, { new: true, runValidators: true }
         );
 
+        if (!updatedProduct) {
+            console.error("❌ Failed to update - product not found or update returned null");
+            return res.status(404).json({
+                success: false,
+                message: "Product not found or update failed"
+            });
+        }
+
         console.log("✅ Funding progress updated successfully");
+        console.log("📊 Updated product data:", {
+            id: updatedProduct._id,
+            currentFunding: updatedProduct.currentFunding,
+            totalInvestors: updatedProduct.totalInvestors,
+            fundingDeadline: updatedProduct.fundingDeadline,
+            fundingStatus: updatedProduct.fundingStatus,
+            updatedAt: updatedProduct.updatedAt
+        });
+
+        // Clear cached lists so updated funding is reflected immediately
+        clearCache("/api/investment-product/list");
+
+        res.set({
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
 
         res.json({
             success: true,
@@ -745,6 +796,15 @@ const updateProductStatus = async(req, res) => {
 
         console.log("✅ Product status updated successfully");
 
+        // Clear cached lists so status changes are visible immediately
+        clearCache("/api/investment-product/list");
+
+        res.set({
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
+
         res.json({
             success: true,
             message: "Product status updated successfully",
@@ -781,6 +841,15 @@ const toggleFeatured = async(req, res) => {
 
         console.log("✅ Featured status updated successfully");
 
+        // Clear cached lists so featured flags are updated immediately
+        clearCache("/api/investment-product/list");
+
+        res.set({
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
+
         res.json({
             success: true,
             message: "Featured status updated successfully",
@@ -816,6 +885,15 @@ const toggleActive = async(req, res) => {
         }
 
         console.log("✅ Active status updated successfully");
+
+        // Clear cached lists so active/inactive changes are reflected immediately
+        clearCache("/api/investment-product/list");
+
+        res.set({
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
 
         res.json({
             success: true,

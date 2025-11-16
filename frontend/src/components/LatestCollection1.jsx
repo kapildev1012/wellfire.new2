@@ -955,7 +955,7 @@ const ProductVideoCard = ({ product, className = "", isYouTubeThumbnail = false 
         )
     } <
     /div> < /
-    motion.div >
+motion.div >
 );
 };
 
@@ -1412,7 +1412,7 @@ return ( <
                                     )
                                 } <
                                 /div> < /
-                                div >
+                            div >
                         )
                     }
 
@@ -1565,8 +1565,7 @@ return ( <
                             div >
                         )
                     } <
-                    /div> < /
-                    >
+                    /div> < / >
                 )
             } <
             /div>
@@ -1585,7 +1584,7 @@ div className = "absolute top-2 right-2 sm:top-3 sm:right-3 flex items-center ga
         ))
     } <
     /div> < /
-    div > <
+div > <
     /div>
 );
 };

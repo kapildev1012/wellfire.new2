@@ -47,45 +47,73 @@ const ShopContextProvider = ({ children }) => {
 
     // 🛒 Cart Management
     const addToCart = async(itemId, size, quantity = 1) => {
-        if (!size) return toast.error("Select Product Size");
-
-        const updatedCart = JSON.parse(JSON.stringify(cartItems));
-        updatedCart[itemId] = updatedCart[itemId] || {};
-        updatedCart[itemId][size] = (updatedCart[itemId][size] || 0) + quantity;
-
-        setCartItems(updatedCart);
-
-        // Save to localStorage instead of API
-        try {
-            localStorage.setItem('cartItems', JSON.stringify(updatedCart));
-        } catch (error) {
-            console.error('Error saving cart to localStorage:', error);
+        if (!size) {
+            toast.error("Please select a product size");
+            return;
         }
 
-        toast.success("Added to Cart");
+        try {
+            const product = products.find((p) => p._id === itemId);
+            if (!product) {
+                toast.error("Product not found");
+                return;
+            }
+
+            if (!product.sizes.includes(size)) {
+                toast.error("Selected size is not available for this product");
+                return;
+            }
+
+            const updatedCart = {...cartItems };
+            updatedCart[itemId] = updatedCart[itemId] || {};
+            updatedCart[itemId][size] = (updatedCart[itemId][size] || 0) + quantity;
+
+            setCartItems(updatedCart);
+            localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+            toast.success("Added to Cart");
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            toast.error("Failed to add item to cart");
+        }
     };
 
     const updateQuantity = async(itemId, size, quantity) => {
-        const updatedCart = JSON.parse(JSON.stringify(cartItems));
+        try {
+            const updatedCart = {...cartItems };
 
-        if (updatedCart[itemId]) {
+            if (!updatedCart[itemId]) {
+                toast.error("Item not found in cart");
+                return;
+            }
+
             if (quantity > 0) {
-                updatedCart[itemId][size] = quantity;
+                // Validate quantity is a positive number
+                const numericQuantity = Number(quantity);
+                if (isNaN(numericQuantity) || numericQuantity <= 0) {
+                    toast.error("Please enter a valid quantity");
+                    return;
+                }
+                updatedCart[itemId] = {...updatedCart[itemId], [size]: numericQuantity };
             } else {
-                delete updatedCart[itemId][size];
-                if (Object.keys(updatedCart[itemId]).length === 0) {
-                    delete updatedCart[itemId];
+                // Remove the size if quantity is 0 or negative
+                if (updatedCart[itemId][size]) {
+                    const {
+                        [size]: _, ...restSizes
+                    } = updatedCart[itemId];
+
+                    if (Object.keys(restSizes).length > 0) {
+                        updatedCart[itemId] = restSizes;
+                    } else {
+                        delete updatedCart[itemId];
+                    }
                 }
             }
-        }
 
-        setCartItems(updatedCart);
-
-        // Save to localStorage instead of API
-        try {
+            setCartItems(updatedCart);
             localStorage.setItem('cartItems', JSON.stringify(updatedCart));
         } catch (error) {
-            console.error('Error saving cart to localStorage:', error);
+            console.error('Error updating cart quantity:', error);
+            toast.error("Failed to update quantity");
         }
     };
 
@@ -111,7 +139,9 @@ const ShopContextProvider = ({ children }) => {
     const getFirstCartItemImage = () => {
         for (const itemId of Object.keys(cartItems)) {
             const product = products.find((p) => p._id === itemId);
-            if (product ? .image) return product.image;
+            if (product && product.image && product.image[0]) {
+                return product.image[0];
+            }
         }
         return null;
     };
@@ -119,9 +149,7 @@ const ShopContextProvider = ({ children }) => {
     // 🌟 Reviews
     const addReview = async(productId, reviewData) => {
         try {
-            const res = await axios.post(
-                `${backendUrl}/api/review/add`, { productId, review: reviewData }, { headers: { token } }
-            );
+            const res = await axios.post(`${backendUrl}/api/review/add`, { productId, review: reviewData }, { headers: { token } });
 
             if (res.data.success) {
                 toast.success("Review added!");
@@ -173,33 +201,31 @@ const ShopContextProvider = ({ children }) => {
         setProducts(demoProducts);
     };
 
-    // 🛒 Use Local Cart Storage
-    const getUserCart = async(authToken) => {
-        // Use localStorage for cart instead of API
-        try {
-            const storedCart = localStorage.getItem('cartItems');
-            if (storedCart) {
-                setCartItems(JSON.parse(storedCart));
-            }
-        } catch (error) {
-            console.error('Error loading cart from localStorage:', error);
-            setCartItems({});
-        }
-    };
-
-    // 🚀 App Init (Static Data)
+    // � App Init (Static Data)
     useEffect(() => {
         // Load static demo data
         getProductsData();
-    }, []);
 
-    useEffect(() => {
+        // Load token from localStorage
         const storedToken = localStorage.getItem("token");
-        if (!token && storedToken) setToken(storedToken);
-    }, []);
+        if (!token && storedToken) {
+            setToken(storedToken);
+        }
 
-    useEffect(() => {
-        if (token) getUserCart(token);
+        // Load cart from localStorage
+        const loadCart = () => {
+            try {
+                const storedCart = localStorage.getItem('cartItems');
+                if (storedCart) {
+                    setCartItems(JSON.parse(storedCart));
+                }
+            } catch (error) {
+                console.error('Error loading cart from localStorage:', error);
+                toast.error('Failed to load cart');
+            }
+        };
+
+        loadCart();
     }, [token]);
 
     // 🧠 Context Value

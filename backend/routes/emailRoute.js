@@ -11,7 +11,7 @@ const createTransporter = () => {
         user: process.env.EMAIL_USER ? 'SET' : 'NOT SET',
         pass: process.env.EMAIL_APP_PASSWORD ? 'SET' : 'NOT SET'
     });
-    
+
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -29,10 +29,10 @@ const createTransporter = () => {
 };
 
 // Send email endpoint
-router.post('/send-email', async (req, res) => {
+router.post('/send-email', async(req, res) => {
     console.log('📧 Email endpoint hit - /send-email');
     console.log('📋 Request body:', req.body);
-    
+
     try {
         const { to, subject, html, text } = req.body;
 
@@ -86,37 +86,37 @@ router.post('/send-email', async (req, res) => {
 });
 
 // Send partnership email endpoint
-router.post('/send-partnership-email', async (req, res) => {
-    try {
-        console.log('📧 Partnership email request received:', {
-            body: req.body,
-            hasAttachments: req.body.attachments ? req.body.attachments.length : 0
-        });
+router.post('/send-partnership-email', async(req, res) => {
+            try {
+                console.log('📧 Partnership email request received:', {
+                    body: req.body,
+                    hasAttachments: req.body.attachments ? req.body.attachments.length : 0
+                });
 
-        const { name, email, phone, website, companyDetail, productInfo, attachments } = req.body;
+                const { name, email, phone, website, companyDetail, productInfo, attachments } = req.body;
 
-        // Validate required fields
-        if (!name || !email || !phone) {
-            console.log('❌ Validation failed - missing required fields');
-            return res.status(400).json({
-                success: false,
-                message: 'Missing required fields: name, email, and phone'
-            });
-        }
+                // Validate required fields
+                if (!name || !email || !phone) {
+                    console.log('❌ Validation failed - missing required fields');
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Missing required fields: name, email, and phone'
+                    });
+                }
 
-        // Check environment variables
-        if (!process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
-            console.log('❌ Email configuration missing - check EMAIL_USER and EMAIL_APP_PASSWORD');
-            return res.status(500).json({
-                success: false,
-                message: 'Email service not configured properly'
-            });
-        }
+                // Check environment variables
+                if (!process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
+                    console.log('❌ Email configuration missing - check EMAIL_USER and EMAIL_APP_PASSWORD');
+                    return res.status(500).json({
+                        success: false,
+                        message: 'Email service not configured properly'
+                    });
+                }
 
-        const transporter = createTransporter();
+                const transporter = createTransporter();
 
-        // Create HTML email content
-        const htmlContent = `
+                // Create HTML email content
+                const htmlContent = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                 <h2 style="color: #333; border-bottom: 2px solid #ff4444; padding-bottom: 10px;">
                     New Partnership Application
@@ -153,7 +153,7 @@ router.post('/send-partnership-email', async (req, res) => {
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: 'info@thewellfire.com', // Partnership emails go to Wellfire
+            to: 'info.wellfire@gmail.com', // Partnership emails go to Wellfire
             subject: `New Partnership Application - ${name}`,
             html: htmlContent,
             text: `New partnership application received:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nWebsite: ${website || 'Not provided'}\nCompany Details: ${companyDetail || 'Not provided'}\n\nProduct Info: ${productInfo || 'Not specified'}\n\nApplication submitted on: ${new Date().toLocaleString()}`

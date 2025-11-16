@@ -1,18 +1,18 @@
 import axios from "axios";
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
-export const ShopContext = createContext();
+import { ShopContext } from "./ShopContext";
 
 const ShopContextProvider = ({ children }) => {
     const currency = "₹";
     const delivery_fee = 0;
     const backendUrl =
-        import.meta.env.VITE_BACKEND_URL;
+        import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
     const navigate = useNavigate();
-    const url = backendUrl || "http://localhost:4000"
-        // 🔄 States
+
+    // 🔄 States
     const [token, setToken] = useState("");
     const [search, setSearch] = useState("");
     const [showSearch, setShowSearch] = useState(false);
@@ -93,13 +93,17 @@ const ShopContextProvider = ({ children }) => {
                     toast.error("Please enter a valid quantity");
                     return;
                 }
-                updatedCart[itemId] = {...updatedCart[itemId], [size]: numericQuantity };
+                updatedCart[itemId] = {
+                    ...updatedCart[itemId],
+                    [size]: numericQuantity
+                };
             } else {
                 // Remove the size if quantity is 0 or negative
                 if (updatedCart[itemId][size]) {
+                    // Using object destructuring to remove the size we don't want
+                    // The _ variable is intentionally unused
                     const {
-                        [size]: _, ...restSizes
-                    } = updatedCart[itemId];
+                        [size]: _, ...restSizes } = updatedCart[itemId];
 
                     if (Object.keys(restSizes).length > 0) {
                         updatedCart[itemId] = restSizes;
@@ -260,9 +264,10 @@ const ShopContextProvider = ({ children }) => {
         setDiscount,
     };
 
-    return ( <
-        ShopContext.Provider value = { contextValue } > { children } < /ShopContext.Provider>
+    return ( <ShopContext.Provider value = { contextValue } > { children } </ShopContext.Provider>
     );
 };
+
+ShopContextProvider.propTypes = {children:PropTypes.node.isRequired};
 
 export default ShopContextProvider;

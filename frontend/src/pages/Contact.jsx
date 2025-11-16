@@ -1,262 +1,263 @@
 import React, { useEffect, useState } from "react";
 
 const Contact = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [file, setFile] = useState(null);
-  
-  // Check mobile device
-  const checkMobile = () => {
-    setIsMobile(window.innerWidth < 768);
-  };
+        const [isMobile, setIsMobile] = useState(false);
+        const [file, setFile] = useState(null);
 
-  // Form data state
-  const [formData, setFormData] = useState({
-    name: "",
-    stageName: "",
-    contact: "",
-    email: "",
-    industry: "",
-    message: "",
-  });
-  
-  // Mobile-specific states
-  const [showMobileKeyboard, setShowMobileKeyboard] = useState(false);
-  const [touchStartY, setTouchStartY] = useState(0);
-  const [touchEndY, setTouchEndY] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [currentStep, setCurrentStep] = useState(1);
-  const [showPreview, setShowPreview] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const [savedDrafts, setSavedDrafts] = useState([]);
-
-  // Scroll to top when component mounts and setup mobile detection
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Auto-save draft functionality
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (formData.name || formData.email || formData.message) {
-        const draft = {
-          ...formData,
-          timestamp: new Date().toLocaleString(),
-          id: Date.now(),
+        // Check mobile device
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
         };
-        const existingDrafts = JSON.parse(
-          localStorage.getItem("contactDrafts") || "[]"
-        );
-        const newDrafts = [draft, ...existingDrafts.slice(0, 2)]; // Keep only 3 drafts
-        localStorage.setItem("contactDrafts", JSON.stringify(newDrafts));
-      }
-    }, 3000);
 
-    return () => clearTimeout(timer);
-  }, [formData]);
+        // Form data state
+        const [formData, setFormData] = useState({
+            name: "",
+            stageName: "",
+            contact: "",
+            email: "",
+            industry: "",
+            message: "",
+        });
 
-  // Load saved drafts on component mount
-  useEffect(() => {
-    const drafts = JSON.parse(localStorage.getItem("contactDrafts") || "[]");
-    setSavedDrafts(drafts);
-  }, []);
+        // Mobile-specific states
+        const [showMobileKeyboard, setShowMobileKeyboard] = useState(false);
+        const [touchStartY, setTouchStartY] = useState(0);
+        const [touchEndY, setTouchEndY] = useState(0);
+        const [isSubmitting, setIsSubmitting] = useState(false);
+        const [showSuccess, setShowSuccess] = useState(false);
+        const [errors, setErrors] = useState({});
+        const [currentStep, setCurrentStep] = useState(1);
+        const [showPreview, setShowPreview] = useState(false);
+        const [isTyping, setIsTyping] = useState(false);
+        const [savedDrafts, setSavedDrafts] = useState([]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    let filteredValue = value;
+        // Scroll to top when component mounts and setup mobile detection
+        useEffect(() => {
+            window.scrollTo(0, 0);
+            checkMobile();
+            window.addEventListener('resize', checkMobile);
+            return () => window.removeEventListener('resize', checkMobile);
+        }, []);
 
-    // Name field - only allow alphabets and spaces
-    if (name === 'name') {
-      filteredValue = value.replace(/[^a-zA-Z\s]/g, '');
-    }
-    
-    // Contact field - only allow numbers, spaces, +, -, ()
-    if (name === 'contact') {
-      filteredValue = value.replace(/[^0-9\s+\-()]/g, '');
-    }
+        // Auto-save draft functionality
+        useEffect(() => {
+            const timer = setTimeout(() => {
+                if (formData.name || formData.email || formData.message) {
+                    const draft = {
+                        ...formData,
+                        timestamp: new Date().toLocaleString(),
+                        id: Date.now(),
+                    };
+                    const existingDrafts = JSON.parse(
+                        localStorage.getItem("contactDrafts") || "[]"
+                    );
+                    const newDrafts = [draft, ...existingDrafts.slice(0, 2)]; // Keep only 3 drafts
+                    localStorage.setItem("contactDrafts", JSON.stringify(newDrafts));
+                }
+            }, 3000);
 
-    setFormData({ ...formData, [name]: filteredValue });
-    setIsTyping(true);
-    setTimeout(() => setIsTyping(false), 1000);
+            return () => clearTimeout(timer);
+        }, [formData]);
 
-    // Mobile keyboard detection
-    if (isMobile) {
-      setShowMobileKeyboard(true);
-      setTimeout(() => setShowMobileKeyboard(false), 2000);
-    }
+        // Load saved drafts on component mount
+        useEffect(() => {
+            const drafts = JSON.parse(localStorage.getItem("contactDrafts") || "[]");
+            setSavedDrafts(drafts);
+        }, []);
 
-    if (errors[name]) {
-      setErrors({ ...errors, [name]: "" });
-    }
-  };
+        const handleChange = (e) => {
+            const { name, value } = e.target;
+            let filteredValue = value;
 
-  // Mobile touch handlers
-  const handleTouchStart = (e) => {
-    setTouchStartY(e.touches[0].clientY);
-  };
+            // Name field - only allow alphabets and spaces
+            if (name === 'name') {
+                filteredValue = value.replace(/[^a-zA-Z\s]/g, '');
+            }
 
-  const handleTouchMove = (e) => {
-    setTouchEndY(e.touches[0].clientY);
-  };
+            // Contact field - only allow numbers, spaces, +, -, ()
+            if (name === 'contact') {
+                filteredValue = value.replace(/[^0-9\s+\-()]/g, '');
+            }
 
-  const handleTouchEnd = () => {
-    if (touchStartY - touchEndY > 50) {
-      // Swipe up - could be used for navigation
-    }
-    if (touchEndY - touchStartY > 50) {
-      // Swipe down - could be used for navigation
-    }
-  };
+            setFormData({...formData, [name]: filteredValue });
+            setIsTyping(true);
+            setTimeout(() => setIsTyping(false), 1000);
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      // Validate file size (10MB limit)
-      if (selectedFile.size > 10 * 1024 * 1024) {
-        alert('File size must be less than 10MB');
-        return;
-      }
-      setFile(selectedFile);
-    }
-  };
+            // Mobile keyboard detection
+            if (isMobile) {
+                setShowMobileKeyboard(true);
+                setTimeout(() => setShowMobileKeyboard(false), 2000);
+            }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+            if (errors[name]) {
+                setErrors({...errors, [name]: "" });
+            }
+        };
 
-    if (!validateForm()) return;
+        // Mobile touch handlers
+        const handleTouchStart = (e) => {
+            setTouchStartY(e.touches[0].clientY);
+        };
 
-    setIsSubmitting(true);
+        const handleTouchMove = (e) => {
+            setTouchEndY(e.touches[0].clientY);
+        };
 
-    try {
-      // Send email directly via backend
-      await sendEmail();
+        const handleTouchEnd = () => {
+            if (touchStartY - touchEndY > 50) {
+                // Swipe up - could be used for navigation
+            }
+            if (touchEndY - touchStartY > 50) {
+                // Swipe down - could be used for navigation
+            }
+        };
 
-      // Clear form
-      setFormData({
-        name: "",
-        stageName: "",
-        contact: "",
-        email: "",
-        industry: "",
-        message: "",
-      });
-      setFile(null);
+        const handleFileChange = (e) => {
+            const selectedFile = e.target.files[0];
+            if (selectedFile) {
+                // Validate file size (10MB limit)
+                if (selectedFile.size > 10 * 1024 * 1024) {
+                    alert('File size must be less than 10MB');
+                    return;
+                }
+                setFile(selectedFile);
+            }
+        };
 
-      // Show success message
-      setShowSuccess(true);
+        const handleSubmit = async(e) => {
+            e.preventDefault();
 
-      // Clear localStorage drafts
-      localStorage.removeItem("contactDrafts");
-      setSavedDrafts([]);
+            if (!validateForm()) return;
 
-      // Hide success message after 5 seconds
-      setTimeout(() => {
-        setShowSuccess(false);
-      }, 5000);
-    } catch (error) {
-      console.error("Submission error:", error);
-      alert('Failed to send application. Please try again later.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+            setIsSubmitting(true);
+
+            try {
+                // Send email directly via backend
+                await sendEmail();
+
+                // Clear form
+                setFormData({
+                    name: "",
+                    stageName: "",
+                    contact: "",
+                    email: "",
+                    industry: "",
+                    message: "",
+                });
+                setFile(null);
+
+                // Show success message
+                setShowSuccess(true);
+
+                // Clear localStorage drafts
+                localStorage.removeItem("contactDrafts");
+                setSavedDrafts([]);
+
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    setShowSuccess(false);
+                }, 5000);
+            } catch (error) {
+                console.error("Submission error:", error);
+                alert('Failed to send application. Please try again later.');
+            } finally {
+                setIsSubmitting(false);
+            }
+        };
 
 
-  const validateForm = () => {
-    const newErrors = {};
+        const validateForm = () => {
+            const newErrors = {};
 
-    // Name validation
-    if (!formData.name.trim()) {
-      newErrors.name = "Full name is required";
-    } else if (!/^[a-zA-Z\s]+$/.test(formData.name.trim())) {
-      newErrors.name = "Name should only contain alphabets and spaces";
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = "Name should be at least 2 characters long";
-    } else if (formData.name.trim().length > 50) {
-      newErrors.name = "Name should not exceed 50 characters";
-    }
+            // Name validation
+            if (!formData.name.trim()) {
+                newErrors.name = "Full name is required";
+            } else if (!/^[a-zA-Z\s]+$/.test(formData.name.trim())) {
+                newErrors.name = "Name should only contain alphabets and spaces";
+            } else if (formData.name.trim().length < 2) {
+                newErrors.name = "Name should be at least 2 characters long";
+            } else if (formData.name.trim().length > 50) {
+                newErrors.name = "Name should not exceed 50 characters";
+            }
 
-    // Stage name validation (optional but if provided, should be valid)
-    if (formData.stageName && formData.stageName.trim().length > 0) {
-      if (formData.stageName.trim().length < 2) {
-        newErrors.stageName = "Stage name should be at least 2 characters long";
-      } else if (formData.stageName.trim().length > 30) {
-        newErrors.stageName = "Stage name should not exceed 30 characters";
-      }
-    }
+            // Stage name validation (optional but if provided, should be valid)
+            if (formData.stageName && formData.stageName.trim().length > 0) {
+                if (formData.stageName.trim().length < 2) {
+                    newErrors.stageName = "Stage name should be at least 2 characters long";
+                } else if (formData.stageName.trim().length > 30) {
+                    newErrors.stageName = "Stage name should not exceed 30 characters";
+                }
+            }
 
-    // Contact validation
-    if (!formData.contact.trim()) {
-      newErrors.contact = "Contact number is required";
-    } else if (!/^\+?[\d\s\-()]{10,15}$/.test(formData.contact.trim())) {
-      newErrors.contact = "Please enter a valid phone number (10-15 digits)";
-    }
+            // Contact validation
+            if (!formData.contact.trim()) {
+                newErrors.contact = "Contact number is required";
+            } else if (!/^\+?[\d\s\-()]{10,15}$/.test(formData.contact.trim())) {
+                newErrors.contact = "Please enter a valid phone number (10-15 digits)";
+            }
 
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = "Email address is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      newErrors.email = "Please enter a valid email address";
-    } else if (formData.email.trim().length > 100) {
-      newErrors.email = "Email address is too long";
-    }
+            // Email validation
+            if (!formData.email.trim()) {
+                newErrors.email = "Email address is required";
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+                newErrors.email = "Please enter a valid email address";
+            } else if (formData.email.trim().length > 100) {
+                newErrors.email = "Email address is too long";
+            }
 
-    // Message validation
-    if (!formData.message.trim()) {
-      newErrors.message = "Please tell us about yourself and your goals";
-    } else if (formData.message.trim().length < 20) {
-      newErrors.message = "Message should be at least 20 characters long";
-    } else if (formData.message.trim().length > 1000) {
-      newErrors.message = "Message should not exceed 1000 characters";
-    }
+            // Message validation
+            if (!formData.message.trim()) {
+                newErrors.message = "Please tell us about yourself and your goals";
+            } else if (formData.message.trim().length < 20) {
+                newErrors.message = "Message should be at least 20 characters long";
+            } else if (formData.message.trim().length > 1000) {
+                newErrors.message = "Message should not exceed 1000 characters";
+            }
 
-    // Industry validation (optional but if selected, should be valid)
-    if (formData.industry && !['Music', 'Film', 'Dance', 'Comedy', 'Theater', 'Content', 'Writing', 'Photography', 'Other'].includes(formData.industry)) {
-      newErrors.industry = "Please select a valid industry";
-    }
+            // Industry validation (optional but if selected, should be valid)
+            if (formData.industry && !['Music', 'Film', 'Dance', 'Comedy', 'Theater', 'Content', 'Writing', 'Photography', 'Other'].includes(formData.industry)) {
+                newErrors.industry = "Please select a valid industry";
+            }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+            setErrors(newErrors);
+            return Object.keys(newErrors).length === 0;
+        };
 
-  const sendEmail = async () => {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
-    
-    // Prepare attachments if file is selected
-    let attachments = [];
-    if (file) {
-      const reader = new FileReader();
-      const fileContent = await new Promise((resolve, reject) => {
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-      
-      // Extract base64 content and remove data URL prefix
-      const base64Content = fileContent.split(',')[1];
-      
-      attachments = [{
-        filename: file.name,
-        content: base64Content,
-        contentType: file.type,
-        size: file.size
-      }];
-    }
-    
-    const response = await fetch(`${backendUrl}/api/email/send-email`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        to: 'info@thewellfire.com',
-        subject: `New Talent Application - ${formData.name}`,
-        text: `New talent application received:\n\nName: ${formData.name}\nStage Name: ${formData.stageName || "Not provided"}\nPhone: ${formData.contact}\nEmail: ${formData.email}\nIndustry: ${formData.industry || "Not specified"}\n\nMessage:\n${formData.message}\n\nApplication submitted on: ${new Date().toLocaleString()}`,
-        html: `
+        const sendEmail = async() => {
+                const backendUrl =
+                    import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+
+                // Prepare attachments if file is selected
+                let attachments = [];
+                if (file) {
+                    const reader = new FileReader();
+                    const fileContent = await new Promise((resolve, reject) => {
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                    });
+
+                    // Extract base64 content and remove data URL prefix
+                    const base64Content = fileContent.split(',')[1];
+
+                    attachments = [{
+                        filename: file.name,
+                        content: base64Content,
+                        contentType: file.type,
+                        size: file.size
+                    }];
+                }
+
+                const response = await fetch(`${backendUrl}/api/email/send-email`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                        to: 'info.wellfire@gmail.com',
+                                        subject: `New Talent Application - ${formData.name}`,
+                                        text: `New talent application received:\n\nName: ${formData.name}\nStage Name: ${formData.stageName || "Not provided"}\nPhone: ${formData.contact}\nEmail: ${formData.email}\nIndustry: ${formData.industry || "Not specified"}\n\nMessage:\n${formData.message}\n\nApplication submitted on: ${new Date().toLocaleString()}`,
+                                        html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2 style="color: #333; border-bottom: 2px solid #ff4444; padding-bottom: 10px;">
               New Talent Application
@@ -369,7 +370,7 @@ const Contact = () => {
 
   const handleQuickEmail = () => {
     window.location.href =
-      "mailto:info@thewellfire.com?subject=Quick Inquiry - WELLFIRE Entertainment";
+      "mailto:info.wellfire@gmail.com?subject=Quick Inquiry - WELLFIRE Entertainment";
   };
 
   return (

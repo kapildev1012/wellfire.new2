@@ -78,7 +78,7 @@ const CategoryShowcase = ({ category, title }) => {
                 console.log(`📡 Response status:`, response.status);
                 console.log(`📡 Response success:`, response.data.success);
                 console.log(`📡 Products array:`, response.data.products);
-                console.log(`📡 Products length:`, response.data.products ? .length);
+                console.log(`📡 Products length:`, response.data.products?.length);
 
                 if (response.data.success && response.data.products) {
                     setInvestmentProducts(response.data.products);
@@ -93,8 +93,8 @@ const CategoryShowcase = ({ category, title }) => {
                 console.error(`❌ Error fetching products for ${category}:`, error);
                 console.error(`❌ Error details:`, {
                     message: error.message,
-                    status: error.response ? .status,
-                    data: error.response ? .data,
+                    status: error.response?.status,
+                    data: error.response?.data,
                 });
             } finally {
                 // Don't set loading to false here - wait for videos to be ready
@@ -140,7 +140,7 @@ const CategoryShowcase = ({ category, title }) => {
         );
 
         const filtered = investmentProducts.filter((item) => {
-            const itemCategory = item.category ? .toLowerCase() || "";
+            const itemCategory = item.category?.toLowerCase() || "";
             const targetCategory = category.toLowerCase();
 
             console.log(
@@ -165,7 +165,7 @@ const CategoryShowcase = ({ category, title }) => {
             `🎯 Found ${sortedFiltered.length} products for ${category}, sorted by views:`,
             sortedFiltered.map(p => ({
                 title: p.productTitle,
-                views: videoStats[p.id || p.productTitle] ? .estimatedViews || 0
+                views: videoStats[p.id || p.productTitle]?.estimatedViews || 0
             }))
         );
         setCategoryProducts(sortedFiltered);
@@ -360,7 +360,7 @@ const CategoryShowcase = ({ category, title }) => {
         if (!raw) return null;
         let embed = getYouTubeEmbedUrl(raw);
         if (!embed) return null;
-        const id = embed.split("/embed/")[1] ? .split("?")[0];
+        const id = embed.split("/embed/")[1]?.split("?")[0];
         if (!id) return null;
         return `https://www.youtube.com/watch?v=${id}`;
     };
@@ -414,14 +414,14 @@ const CategoryShowcase = ({ category, title }) => {
 
         // Boost score for popular keywords
         const popularKeywords = ['official', 'music video', 'mv', 'full', 'hd', '4k', 'new', 'latest', 'hit'];
-        const titleLower = title ? .toLowerCase() || '';
+        const titleLower = title?.toLowerCase() || '';
         popularKeywords.forEach(keyword => {
             if (titleLower.includes(keyword)) score += 500000;
         });
 
         // Boost score for known popular artists/channels
         const popularArtists = ['vevo', 'records', 'music', 'entertainment'];
-        const authorLower = author ? .toLowerCase() || '';
+        const authorLower = author?.toLowerCase() || '';
         popularArtists.forEach(artist => {
             if (authorLower.includes(artist)) score += 1000000;
         });
@@ -451,11 +451,11 @@ const CategoryShowcase = ({ category, title }) => {
         div className = "relative w-full h-full group" >
         <
         img src = {
-            product ? .coverImage ||
-            product ? .image ||
+            product?.coverImage ||
+            product?.image ||
             "https://via.placeholder.com/400x300?text=No+Image"
         }
-        alt = { product ? .productTitle || product ? .name || "Product" }
+        alt = { product?.productTitle || product?.name || "Product" }
         className = { `w-full h-full transition-transform duration-700 group-hover:scale-110 cursor-pointer ${
             isVertical || isRightSide ? "object-cover" : "object-contain"
           }` }
@@ -464,18 +464,18 @@ const CategoryShowcase = ({ category, title }) => {
         }
         />
 
-        { /* Click-through overlay to ensure navigation */ } {
+        {/** Click-through overlay to ensure navigation */ } {
             getYouTubeWatchUrl(product.youtubeLink) && ( <
                 a href = { getYouTubeWatchUrl(product.youtubeLink) }
                 target = "_blank"
                 rel = "noopener noreferrer"
                 className = "absolute inset-0 z-0"
-                aria - label = "Open on YouTube" /
+                aria-label = "Open on YouTube" /
                 >
             )
         }
 
-        { /* Clean video display - no text overlays for video content */ } <
+        {/** Clean video display - no text overlays for video content */ } <
         /div> < /
         motion.div >
     );
@@ -484,7 +484,7 @@ const CategoryShowcase = ({ category, title }) => {
     const HoverVideoCard = ({ product, className = "" }) => {
         const [isPlaying, setIsPlaying] = useState(() => {
             // Initialize based on whether video should autoplay
-            return !!(product ? .videoFile || product ? .youtubeLink);
+            return !!(product?.videoFile || product?.youtubeLink);
         });
         const [isMuted, setIsMuted] = useState(true);
         const [showControls, setShowControls] = useState(false);
@@ -590,10 +590,10 @@ const CategoryShowcase = ({ category, title }) => {
             div className = "relative w-full h-full group overflow-hidden"
             style = {
                 { margin: 0, padding: 0, border: 'none', borderRadius: 0 }
-            } > { /* Show thumbnail first, then lazy load iframe - YouTube optimization */ } {
+            } > {/** Show thumbnail first, then lazy load iframe - YouTube optimization */ } {
                 getYouTubeEmbedUrl(product.youtubeLink) ? ( <
                     >
-                    { /* Show thumbnail immediately for fast loading */ } {
+                    {/** Show thumbnail immediately for fast loading */ } {
                         !loadIframe && ( <
                             img src = { `https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/maxresdefault.jpg` }
                             alt = { product.productTitle || "Video" }
@@ -611,7 +611,7 @@ const CategoryShowcase = ({ category, title }) => {
                         )
                     }
 
-                    { /* Lazy load iframe after delay */ } {
+                    {/** Lazy load iframe after delay */ } {
                         loadIframe && ( <
                             iframe ref = { iframeRef }
                             src = { `${getYouTubeEmbedUrl(product.youtubeLink)}&autoplay=1&mute=${isMuted ? 1 : 0}&controls=0&modestbranding=1&rel=0&start=30&vq=hd720` }
@@ -637,7 +637,7 @@ const CategoryShowcase = ({ category, title }) => {
                         )
                     } <
                     />
-                ) : product ? .videoFile ? ( <
+                ) : product?.videoFile ? ( <
                     video ref = { videoRef }
                     src = { product.videoFile }
                     className = { `w-full h-full ${isMobile ? 'object-contain' : 'object-cover'}` }
@@ -666,17 +666,17 @@ const CategoryShowcase = ({ category, title }) => {
                     />
                 ) : ( <
                     img src = {
-                        product ? .coverImage ||
-                        product ? .image ||
+                        product?.coverImage ||
+                        product?.image ||
                         `https://img.youtube.com/vi/${getYouTubeEmbedUrl(product.youtubeLink)?.split('/embed/')[1]?.split('?')[0]}/maxresdefault.jpg` ||
                         "https://via.placeholder.com/400x300?text=No+Image"
                     }
-                    alt = { product ? .productTitle || product ? .name || "Product" }
+                    alt = { product?.productTitle || product?.name || "Product" }
                     className = "w-full h-full object-cover cursor-pointer"
                     onError = {
                         (e) => {
                             if (product.youtubeLink) {
-                                const videoId = getYouTubeEmbedUrl(product.youtubeLink) ? .split('/embed/')[1] ? .split('?')[0];
+                                const videoId = getYouTubeEmbedUrl(product.youtubeLink)?.split('/embed/')[1]?.split('?')[0];
                                 if (e.target.src.includes('maxresdefault')) {
                                     e.target.src = `https://img.youtube.com/vi/${videoId}/hq720.jpg`;
                                 } else if (e.target.src.includes('hq720')) {
@@ -689,7 +689,7 @@ const CategoryShowcase = ({ category, title }) => {
                 )
             }
 
-            { /* Loading Spinner - Show until video is playing */ } {
+            {/** Loading Spinner - Show until video is playing */ } {
                 videoLoading && ( <
                     div className = "absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 z-30" >
                     <
@@ -702,14 +702,14 @@ const CategoryShowcase = ({ category, title }) => {
                 )
             }
 
-            { /* Simple Video Controls */ } {
-                (product ? .videoFile || getYouTubeEmbedUrl(product.youtubeLink)) && ( <
-                    div className = { `absolute inset-0 flex items-center justify-center transition-all duration-300 z-20 ${showControls ? 'bg-black bg-opacity-30' : 'bg-transparent'}` } > { /* Single Play/Pause Button */ } <
+            {/** Simple Video Controls */ } {
+                (product?.videoFile || getYouTubeEmbedUrl(product.youtubeLink)) && ( <
+                    div className = { `absolute inset-0 flex items-center justify-center transition-all duration-300 z-20 ${showControls ? 'bg-black bg-opacity-30' : 'bg-transparent'}` } > {/** Single Play/Pause Button */ } <
                     div className = { `transition-all duration-300 transform ${showControls ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}` } > {
-                        product ? .videoFile && ( <
+                        product?.videoFile && ( <
                             button onClick = { togglePlayPause }
                             className = "group relative w-16 h-16 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-xl"
-                            aria - label = { isPlaying ? "Pause" : "Play" } >
+                            aria-label = { isPlaying ? "Pause" : "Play" } >
                             <
                             div className = "absolute inset-0 bg-gradient-to-br from-white to-gray-100 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" > < /div> {
                             isPlaying ? ( <
@@ -735,13 +735,13 @@ const CategoryShowcase = ({ category, title }) => {
                 } <
                 /div>
 
-                { /* Click-through overlay for opening full video - only when controls are hidden */ } {
+                {/** Click-through overlay for opening full video - only when controls are hidden */ } {
                     !showControls && (getYouTubeWatchUrl(product.youtubeLink) || product.videoFile) && ( <
                         a href = { getYouTubeWatchUrl(product.youtubeLink) || product.videoFile }
                         target = "_blank"
                         rel = "noopener noreferrer"
                         className = "absolute inset-0 z-10"
-                        aria - label = "Open video" /
+                        aria-label = "Open video" /
                         >
                     )
                 } <
@@ -791,12 +791,12 @@ const ProductVideoCard = ({ product, className = "", isYouTubeThumbnail = false 
             <
             div className = "relative w-full h-full group overflow-hidden" >
 
-            { /* Always show YouTube thumbnail for instant loading */ } {
+            {/** Always show YouTube thumbnail for instant loading */ } {
                 getYouTubeWatchUrl(product.youtubeLink) ? ( <
                         >
                         <
                         img src = { `https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/maxresdefault.jpg` }
-                        alt = { product ? .productTitle || "YouTube Thumbnail" }
+                        alt = { product?.productTitle || "YouTube Thumbnail" }
                         className = "w-full h-full object-cover"
                         loading = "lazy"
                         onError = {
@@ -811,7 +811,7 @@ const ProductVideoCard = ({ product, className = "", isYouTubeThumbnail = false 
                         }
                         />
 
-                        { /* Only load iframe on hover for performance */ } {
+                        {/** Only load iframe on hover for performance */ } {
                             loadIframe && !isYouTubeThumbnail && ( <
                                 iframe src = { `${getYouTubeEmbedUrl(product.youtubeLink)}&autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&start=30&vq=hd720` }
                                 title = { product.productTitle || "Video" }
@@ -840,7 +840,7 @@ const ProductVideoCard = ({ product, className = "", isYouTubeThumbnail = false 
                         >
                         <
                         img src = { `https://img.youtube.com/vi/${getYouTubeVideoId(product.youtubeLink)}/maxresdefault.jpg` }
-                        alt = { product ? .productTitle || "YouTube Thumbnail" }
+                        alt = { product?.productTitle || "YouTube Thumbnail" }
                         className = "w-full h-full object-cover"
                         loading = "lazy"
                         onError = {
@@ -877,7 +877,7 @@ const ProductVideoCard = ({ product, className = "", isYouTubeThumbnail = false 
                         )
                     } <
                     />
-            ): product ? .videoFile ? ( <
+            ): product?.videoFile ? ( <
                 video src = { product.videoFile }
                 className = "w-full h-full object-cover"
                 muted loop playsInline autoPlay onLoadStart = {
@@ -900,17 +900,17 @@ const ProductVideoCard = ({ product, className = "", isYouTubeThumbnail = false 
                 />
             ) : ( <
                 img src = {
-                    product ? .coverImage ||
-                    product ? .image ||
+                    product?.coverImage ||
+                    product?.image ||
                     "https://via.placeholder.com/400x300?text=No+Image"
                 }
-                alt = { product ? .productTitle || product ? .name || "Product" }
+                alt = { product?.productTitle || product?.name || "Product" }
                 className = "w-full h-full object-cover" /
                 >
             )
         }
 
-        { /* Loading Spinner - Show when loading iframe */ } {
+        {/** Loading Spinner - Show when loading iframe */ } {
             videoLoading && ( <
                 div className = "absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 z-25" >
                 <
@@ -923,18 +923,18 @@ const ProductVideoCard = ({ product, className = "", isYouTubeThumbnail = false 
             )
         }
 
-        { /* Click-through overlay to ensure navigation */ } {
+        {/** Click-through overlay to ensure navigation */ } {
             (getYouTubeWatchUrl(product.youtubeLink) || product.videoFile) && ( <
                 a href = { getYouTubeWatchUrl(product.youtubeLink) || product.videoFile }
                 target = "_blank"
                 rel = "noopener noreferrer"
                 className = "absolute inset-0 z-20"
-                aria - label = "Open video" /
+                aria-label = "Open video" /
                 >
             )
         }
 
-        { /* YouTube Video Title Overlay for Right Side Videos - No hover effect */ } {
+        {/** YouTube Video Title Overlay for Right Side Videos - No hover effect */ } {
             product.youtubeLink && ( <
                     div className = "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-1.5 sm:p-2 z-30" >
                     <
@@ -1004,7 +1004,7 @@ if (isLoading) {
 
 if (categoryProducts.length === 0) {
     return ( <
-        div className = "w-full py-1 sm:py-4" > { /* Category Title */ } <
+        div className = "w-full py-1 sm:py-4" > {/** Category Title */ } <
         motion.div className = "mb-3 sm:mb-6 px-2 sm:px-0"
         initial = {
             { opacity: 0, y: -20 }
@@ -1119,7 +1119,7 @@ else if (category === 'Commercial') {
 }
 
 return ( <
-    div className = "w-full py-1 sm:py-4 lg:px-5" > { /* Category Title with View All Button */ } <
+    div className = "w-full py-1 sm:py-4 lg:px-5" > {/** Category Title with View All Button */ } <
     motion.div className = "mb-3 sm:mb-6 flex justify-between items-center px-2 sm:px-0"
     initial = {
         { opacity: 0, y: -20 }
@@ -1142,8 +1142,8 @@ return ( <
             fontWeight: title === "MUSIC VIDEOS PRODUCTION" || title === "FILM ASSOCIATIONS" || title === "ADVERTISING" ? "900" : "800",
         }
     } > { isMobile && title === "MUSIC VIDEOS PRODUCTION" ? "MUSIC PRODUCTION" : title } <
-    /h2> { / * Show View All button
-    for all sections on mobile * / } <
+    /h2> {/** Show View All button
+    for all sections on mobile */} <
     button onClick = {
         () => {
             window.scrollTo(0, 0);
@@ -1166,7 +1166,7 @@ return ( <
     button > <
     /motion.div>
 
-    { /* Main Content */ } <
+    {/** Main Content */ } <
     div className = "w-full overflow-hidden relative mx-0"
     style = {
         {
@@ -1177,12 +1177,12 @@ return ( <
             border: 'none',
             borderRadius: 0
         }
-    } > { /* Desktop Layout */ } {
+    } > {/** Desktop Layout */ } {
         !isMobile ? ( <
                 div className = "flex h-full"
                 style = {
                     { margin: 0, padding: 0, gap: 0 }
-                } > { /* Dynamic Left Side */ } <
+                } > {/** Dynamic Left Side */ } <
                 div className = {
                     [
                         'h-full flex',
@@ -1247,7 +1247,7 @@ return ( <
                 } <
                 /div>
 
-                { /* Dynamic Right Side */ } {
+                {/** Dynamic Right Side */ } {
                     layoutType !== '1-item' && layoutType !== '2-items' && layoutType !== '3-items-row' && layoutType !== 'commercial-row' && layoutType !== 'commercial-2-items' && ( <
                         div className = "w-1/2 h-full overflow-hidden flex flex-col"
                         style = {
@@ -1340,7 +1340,7 @@ return ( <
                         } <
                         /div>
                     )
-                } { /* Commercial 2-Items Special Right Side */ } {
+                } {/** Commercial 2-Items Special Right Side */ } {
                     layoutType === 'commercial-2-items' && ( <
                         div className = "w-1/2 h-full overflow-hidden flex flex-col justify-center p-10 bg-black bg-opacity-80 relative" >
 
@@ -1380,7 +1380,7 @@ return ( <
                     layoutType === 'video-hover-layout' ? (
                         /* Video-hover layout for Music and Film on mobile */
                         <
-                        div className = "flex flex-col h-full py-2" > { /* Main Video Section */ } <
+                        div className = "flex flex-col h-full py-2" > {/** Main Video Section */ } <
                         div className = "w-full flex-1 mb-8" >
                         <
                         HoverVideoCard key = { `mobile-hover-video-${leftProducts[0]?.id || leftProducts[0]?.productTitle || 'main'}` }
@@ -1390,8 +1390,8 @@ return ( <
                         <
                         /div>
 
-                        { /* Video Details Below Video */ } {
-                            leftProducts[0] ? .youtubeLink && ( <
+                        {/** Video Details Below Video */ } {
+                            leftProducts[0]?.youtubeLink && ( <
                                     div className = "w-full px-2 pb-1 flex justify-center" >
                                     <
                                     div className = "text-center" >
@@ -1416,7 +1416,7 @@ return ( <
                         )
                     }
 
-                    { /* View More Text */ } <
+                    {/** View More Text */ } <
                     div className = "w-full px-4 pb-2 flex justify-center" >
                     <
                     span className = "text-white text-xs font-semibold uppercase tracking-wider cursor-pointer hover:text-gray-300 transition-colors duration-300 underline"
@@ -1440,7 +1440,7 @@ return ( <
                 ): layoutType === 'commercial-2-items' ? (
                     /* Commercial 2-items layout for mobile */
                     <
-                    div className = "flex flex-col h-full" > { /* Two Commercial Items */ } <
+                    div className = "flex flex-col h-full" > {/** Two Commercial Items */ } <
                     div className = "w-full flex-1 flex" > {
                         leftProducts.map((product, index) => ( <
                             div key = { `mobile-commercial-${index}` }
@@ -1456,7 +1456,7 @@ return ( <
                     } <
                     /div>
 
-                    { /* More Advertising Section with View All Button */ } <
+                    {/** More Advertising Section with View All Button */ } <
                     div className = "w-full flex flex-col items-center justify-center py-4 bg-black bg-opacity-70" >
                     <
                     div className = "text-center mb-3" >
@@ -1472,7 +1472,7 @@ return ( <
                     /p> < /
                     div >
 
-                    { /* View All Button for Advertising */ } <
+                    {/** View All Button for Advertising */ } <
                     button onClick = {
                         () => {
                             window.scrollTo(0, 0);
@@ -1497,7 +1497,7 @@ return ( <
                     /* Original mobile layout for other categories */
                     <
                     >
-                    { /* Upper Part - 2 Photos */ } <
+                    {/** Upper Part - 2 Photos */ } <
                     div className = "w-full h-1/2 flex" > {
                         categoryProducts.slice(0, 2).map((product, index) => ( <
                             div key = { `mobile-upper-${index}` }
@@ -1513,7 +1513,7 @@ return ( <
                     } <
                     /div>
 
-                    { /* Lower Part - Smooth Infinite Loop */ } <
+                    {/** Lower Part - Smooth Infinite Loop */ } <
                     div className = "w-full h-2/3 overflow-hidden flex flex-col p-1 gap-1" > {
                         categoryProducts.length > 2 ? ( <
                             motion.div animate = {
@@ -1572,7 +1572,7 @@ return ( <
     )
 }
 
-{ /* Progress Indicator */ } <
+{/** Progress Indicator */ } <
 div className = "absolute top-2 right-2 sm:top-3 sm:right-3 flex items-center gap-1 sm:gap-2" > {
         categoryProducts.slice(0, Math.max(0, (layoutType === '1-item' ? 1 : layoutType === '2-items' ? 2 : layoutType === '3-items' ? 3 : layoutType === '4-items' ? 4 : layoutType === 'commercial-row' ? Math.min(categoryProducts.length, 6) : layoutType === 'commercial-2-items' ? 2 : 2) - (isMobile ? 2 : 0))).map((_, index) => ( <
             motion.div key = { index }
@@ -1627,7 +1627,7 @@ const VerticalSplitShowcase = () => {
     }, []);
 
     return ( <
-        div className = "w-full min-h-screen relative overflow-hidden bg-black py-0 pt-6 md:pt-8 lg:pt-12" > { /* Desktop Main Title */ } {
+        div className = "w-full min-h-screen relative overflow-hidden bg-black py-0 pt-6 md:pt-8 lg:pt-12" > {/** Desktop Main Title */ } {
             !isMobile && ( <
                 motion.div className = "relative z-20 text-center pt-8 pb-12"
                 initial = {
@@ -1654,8 +1654,8 @@ const VerticalSplitShowcase = () => {
             )
         }
 
-        { /* Content Container */ } <
-        div className = "relative z-10 px-6 sm:px-2 pb-0 sm:pb-6 space-y-0 sm:space-y-16" > { /* Music Section */ } <
+        {/** Content Container */ } <
+        div className = "relative z-10 px-6 sm:px-2 pb-0 sm:pb-6 space-y-0 sm:space-y-16" > {/** Music Section */ } <
         div className = "w-full mobile-section-tight" >
         <
         CategoryShowcase category = "Music"
@@ -1663,7 +1663,7 @@ const VerticalSplitShowcase = () => {
         <
         /div>
 
-        { /* Film Section */ } <
+        {/** Film Section */ } <
         div className = "w-full mobile-section-tight" >
         <
         CategoryShowcase category = "Film"
@@ -1671,7 +1671,7 @@ const VerticalSplitShowcase = () => {
         <
         /div>
 
-        { /* Commercial Section */ } <
+        {/** Commercial Section */ } <
         div className = "w-full mobile-last-section" >
         <
         CategoryShowcase category = "Commercial"

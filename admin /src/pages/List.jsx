@@ -70,13 +70,13 @@ const ListInvestmentProducts = ({ token }) => {
 
             if (response.data.success) {
                 console.log('API Response:', response.data);
-                console.log('Products received:', response.data.products ? .length);
+                console.log('Products received:', response.data.products ?.length);
                 console.log('Pagination info:', response.data.pagination);
 
                 setProducts(response.data.products || []);
-                setCurrentPage(response.data.pagination ? .currentPage || 1);
-                setTotalPages(response.data.pagination ? .totalPages || 1);
-                setTotalProducts(response.data.pagination ? .totalProducts || response.data.products ? .length || 0);
+                setCurrentPage(response.data.pagination ?.currentPage || 1);
+                setTotalPages(response.data.pagination ?.totalPages || 1);
+                setTotalProducts(response.data.pagination ?.totalProducts || response.data.products ?.length || 0);
 
                 // Update URL without page reload
                 const url = new URL(window.location);
@@ -87,8 +87,8 @@ const ListInvestmentProducts = ({ token }) => {
             console.error("Fetch products error:", error);
             console.error("Error details:", {
                 message: error.message,
-                response: error.response ? .data,
-                status: error.response ? .status,
+                response: error.response ?.data,
+                status: error.response ?.status,
                 url: `${backendUrl}/api/investment-product/list`
             });
             toast.error(`Failed to fetch products: ${error.response?.data?.message || error.message}`);

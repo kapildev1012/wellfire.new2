@@ -142,40 +142,7 @@ const AboutPreview = ({ showViewMore = true }) => {
           
           </motion.div>
 
-          {/* View More Button - Only show if showViewMore is true */}
-          {showViewMore && (
-            <motion.div variants={itemVariants} className="flex justify-center lg:justify-start pt-1 lg:pt-4 py-4 lg:pt-6">
-              <motion.button
-                onClick={handleReadMore}
-                whileHover={{ 
-                  scale: 1.05,
-                  transition: { duration: 0.3, ease: "easeOut" }
-                }}
-                whileTap={{ scale: 0.95 }}
-                className="group relative inline-flex items-center gap-3 px-6 sm:px-8 py-3 sm:py-4 border border-white text-white font-light uppercase tracking-[0.2em] text-xs sm:text-sm transition-all duration-500 hover:bg-white hover:text-black overflow-hidden bg-transparent rounded-full"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                {/* Background fill effect */}
-                <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
-                
-                <span className="relative z-10">View More</span>
-                <svg
-                  className="w-4 h-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </motion.button>
-            </motion.div>
-          )}
-        </div>
+          
 
         {/* RIGHT SIDE - Description and Button */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center space-y-6 lg:space-y-8 text-center lg:text-left order-2 lg:order-2">

@@ -689,18 +689,7 @@ const CategoryShowcase = ({ category, title }) => {
                 )
             }
 
-            {/** Loading Spinner - Show until video is playing */ } {
-                videoLoading && ( <
-                    div className = "absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 z-30" >
-                    <
-                    div className = "flex flex-col items-center" >
-                    <
-                    div className = "animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-2" > < /div> <
-                    p className = "text-white text-sm" > Loading video... < /p> < /
-                    div > <
-                    /div>
-                )
-            }
+           
 
             {/** Simple Video Controls */ } {
                 (product?.videoFile || getYouTubeEmbedUrl(product.youtubeLink)) && ( <

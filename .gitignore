@@ -6,8 +6,8 @@ backend/.env
 frontend/.env
 admin /.env
 
-# Large video files
-# *.mp4 - Commented out to allow hero.mp4
+# Large video files - excluded from git to avoid LFS issues
+*.mp4
 *.mov
 *.avi
 *.mkv

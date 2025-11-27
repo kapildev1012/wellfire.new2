@@ -1,6 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import heroVideo from "../assets/hero.mp4";
+// Use dynamic import to handle missing video in production
+let heroVideo;
+try {
+  heroVideo = new URL("../assets/hero.mp4", import.meta.url).href;
+} catch (e) {
+  heroVideo = null;
+}
 
 const Hero = () => {
   const videoRef = useRef(null);
@@ -98,28 +104,39 @@ const Hero = () => {
           </div>
         )}
 
-        {/* Full Screen Video */}
-        <video
-          ref={videoRef}
-          src={heroVideo}
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster=""
-          className={`absolute inset-0 w-full h-full object-cover ${
-            !isVideoLoaded ? "hidden" : ""
-          }`}
-          style={{
-            margin: 0,
-            padding: 0,
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover'
-          }}
-        />
+        {/* Full Screen Video or Fallback Image */}
+        {heroVideo ? (
+          <video
+            ref={videoRef}
+            src={heroVideo}
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster=""
+            className={`absolute inset-0 w-full h-full object-cover ${
+              !isVideoLoaded ? "hidden" : ""
+            }`}
+            style={{
+              margin: 0,
+              padding: 0,
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
+            }}
+          />
+        ) : (
+          <div 
+            className="absolute inset-0 w-full h-full"
+            style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              margin: 0,
+              padding: 0,
+            }}
+          />
+        )}
 
         {/* Overlay for better text readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60 pointer-events-none"></div>

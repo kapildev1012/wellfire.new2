@@ -1,8 +1,19 @@
 
 # wellfire.com
-Backend Dependencies (Create backend if not exists):
-bashnpm install express mongoose cors dotenv bcryptjs jsonwebtoken multer helmet morgan express-rate-limit joi cloudinary
+
+## 🚨 Important: Video Asset Configuration
+
+The hero video (`hero.mp4`) has been removed from Git LFS to avoid deployment budget issues. The app will:
+- **Local Development**: Use the local `hero.mp4` file if present in `frontend/src/assets/`
+- **Production Build**: Automatically fallback to a gradient background if the video is missing
+
+To use the video locally, place `hero.mp4` in `frontend/src/assets/` (file is gitignored).
+
+## Backend Dependencies (Create backend if not exists):
+```bash
+npm install express mongoose cors dotenv bcryptjs jsonwebtoken multer helmet morgan express-rate-limit joi cloudinary
 npm install -D nodemon
+```
 Admin Panel Dependencies:
 bashnpm install react react-dom react-router-dom axios prop-types react-toastify react-icons @vitejs/plugin-react vite tailwindcss postcss autoprefixer
 Frontend Dependencies:

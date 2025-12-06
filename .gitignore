@@ -12,6 +12,9 @@ admin /.env
 *.avi
 *.mkv
 
+# Allow this specific hero video (compressed) to be tracked
+!frontend/src/assets/hero.mp4
+
 # Upload directories
 backend/uploads/
 

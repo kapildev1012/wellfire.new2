@@ -71,6 +71,26 @@ const Hero = () => {
     };
   }, [showText]);
 
+  // Try to auto-play video on mobile when it's loaded. Keeping it muted improves autoplay success.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (isMobile && isVideoLoaded) {
+      try {
+        video.muted = true; // ensure muted for autoplay
+        const playPromise = video.play();
+        if (playPromise && playPromise.catch) {
+          playPromise.catch((err) => {
+            // Autoplay might be prevented by browser; log for debugging
+            console.warn('Hero video autoplay prevented:', err);
+          });
+        }
+      } catch (e) {
+        console.warn('Error attempting hero autoplay:', e);
+      }
+    }
+  }, [isMobile, isVideoLoaded]);
+
   return (
     <div
       className="w-full"
@@ -111,7 +131,9 @@ const Hero = () => {
                   display: none !important;
                   -webkit-appearance: none;
                 }
-                .hero-video { outline: none; }
+                .hero-video { outline: none; pointer-events: none; }
+                /* Ensure our overlay buttons remain clickable */
+                .hero-video + .hero-controls, .hero-controls { pointer-events: auto; }
               }
             `}</style>
 
@@ -138,7 +160,7 @@ const Hero = () => {
             />
 
             {/* Mute / Unmute toggle - bottom-right */}
-            <div className="absolute right-4 bottom-4 z-30">
+            <div className="hero-controls absolute right-4 bottom-4 z-30">
               <button
                 onClick={() => {
                   // Toggle state and ensure video element is updated

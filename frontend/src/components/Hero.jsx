@@ -13,6 +13,7 @@ const Hero = () => {
   const [showText, setShowText] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const [isMuted, setIsMuted] = useState(true); // start muted for autoplay compatibility
 
   // Enhanced mobile detection
   useEffect(() => {
@@ -106,27 +107,59 @@ const Hero = () => {
 
         {/* Full Screen Video or Fallback Image */}
         {heroVideo ? (
-          <video
-            ref={videoRef}
-            src={heroVideo}
-            autoPlay
-            loop
-            muted
-            playsInline
-            poster=""
-            className={`absolute inset-0 w-full h-full object-cover ${
-              !isVideoLoaded ? "hidden" : ""
-            }`}
-            style={{
-              margin: 0,
-              padding: 0,
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover'
-            }}
-          />
+          <>
+            <video
+              ref={videoRef}
+              src={heroVideo}
+              autoPlay
+              loop
+              muted={isMuted}
+              playsInline
+              poster=""
+              className={`absolute inset-0 w-full h-full object-cover ${
+                !isVideoLoaded ? "hidden" : ""
+              }`}
+              style={{
+                margin: 0,
+                padding: 0,
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }}
+            />
+
+            {/* Mute / Unmute toggle - bottom-right */}
+            <div className="absolute right-4 bottom-4 z-30">
+              <button
+                onClick={() => {
+                  // Toggle state and ensure video element is updated
+                  const newMuted = !isMuted;
+                  setIsMuted(newMuted);
+                  if (videoRef.current) videoRef.current.muted = newMuted;
+                }}
+                aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+                title={isMuted ? 'Unmute' : 'Mute'}
+                className="bg-black/60 hover:bg-black/70 text-white rounded-full p-2 flex items-center justify-center focus:outline-none"
+              >
+                {isMuted ? (
+                  // Unmute icon (speaker with waves)
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <path d="M19 8a5 5 0 0 1 0 8" />
+                  </svg>
+                ) : (
+                  // Mute icon (speaker with slash)
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <path d="M23 9L15 17" />
+                    <path d="M15 9l8 8" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </>
         ) : (
           <div 
             className="absolute inset-0 w-full h-full"

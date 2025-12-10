@@ -14,6 +14,7 @@ const Hero = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [isMuted, setIsMuted] = useState(true); // start muted for autoplay compatibility
+  const [isPlaying, setIsPlaying] = useState(false);
 
   // Enhanced mobile detection
   useEffect(() => {
@@ -156,6 +157,35 @@ const Hero = () => {
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover'
+              }}
+            />
+
+            {/* Mobile-only invisible overlay: tapping the hero will start playback (no native play button) */}
+            <div
+              className="absolute inset-0 z-20 md:hidden"
+              onClick={async (e) => {
+                // Prevent clicks on control buttons
+                const target = e.target;
+                if (target.closest && target.closest('.hero-controls')) return;
+                const video = videoRef.current;
+                if (!video) return;
+                try {
+                  // On mobile user gesture, allow sound — unmute and play
+                  video.muted = false;
+                  setIsMuted(false);
+                  await video.play();
+                  setIsPlaying(true);
+                } catch (err) {
+                  console.warn('Play on tap failed:', err);
+                  // fallback: try muted play
+                  try {
+                    video.muted = true;
+                    await video.play();
+                    setIsPlaying(true);
+                  } catch (err2) {
+                    console.warn('Fallback muted play failed:', err2);
+                  }
+                }
               }}
             />
 

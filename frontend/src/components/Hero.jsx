@@ -173,17 +173,17 @@ const Hero = () => {
                 className="bg-black/60 hover:bg-black/70 text-white rounded-full p-2 flex items-center justify-center focus:outline-none"
               >
                 {isMuted ? (
-                  // Unmute icon (speaker with waves)
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                    <path d="M19 8a5 5 0 0 1 0 8" />
-                  </svg>
-                ) : (
-                  // Mute icon (speaker with slash)
+                  // Mute icon (speaker with slash) — show when currently muted
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M11 5L6 9H2v6h4l5 4V5z" />
                     <path d="M23 9L15 17" />
                     <path d="M15 9l8 8" />
+                  </svg>
+                ) : (
+                  // Unmute icon (speaker with waves) — show when audio is on
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <path d="M19 8a5 5 0 0 1 0 8" />
                   </svg>
                 )}
               </button>

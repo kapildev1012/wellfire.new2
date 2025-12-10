@@ -27,7 +27,6 @@ const Hero = () => {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
-
   // Handle video loading
   useEffect(() => {
     const video = videoRef.current;
@@ -36,11 +35,6 @@ const Hero = () => {
     const handleLoadedData = () => {
       setIsVideoLoaded(true);
       console.log('Video loaded successfully');
-    };
-    
-    const handleCanPlay = () => {
-      setIsVideoLoaded(true);
-      console.log('Video can play');
     };
     
     const handleError = (e) => {
@@ -108,6 +102,19 @@ const Hero = () => {
         {/* Full Screen Video or Fallback Image */}
         {heroVideo ? (
           <>
+            {/* Mobile-specific CSS to hide native play/pause overlays on iOS/Android WebKit browsers */}
+            <style>{`
+              @media (max-width: 767px) {
+                .hero-video::-webkit-media-controls-start-playback-button,
+                .hero-video::-webkit-media-controls-overlay-play-button,
+                .hero-video::-webkit-media-controls {
+                  display: none !important;
+                  -webkit-appearance: none;
+                }
+                .hero-video { outline: none; }
+              }
+            `}</style>
+
             <video
               ref={videoRef}
               src={heroVideo}
@@ -116,7 +123,7 @@ const Hero = () => {
               muted={isMuted}
               playsInline
               poster=""
-              className={`absolute inset-0 w-full h-full object-cover ${
+              className={`hero-video absolute inset-0 w-full h-full object-cover ${
                 !isVideoLoaded ? "hidden" : ""
               }`}
               style={{
